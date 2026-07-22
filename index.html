@@ -6,35 +6,81 @@
 <title>ExportHub India</title>
 
 <style>
-body{
+*{
 margin:0;
+padding:0;
+box-sizing:border-box;
 font-family:Arial,sans-serif;
+}
+
+body{
 background:#f4f4f4;
+color:#333;
 }
 
 header{
 background:#0b3d91;
-color:white;
-padding:30px;
+color:#fff;
+padding:20px;
 text-align:center;
 }
 
-main{
-padding:40px;
+nav{
+background:#1565c0;
+padding:15px;
 text-align:center;
 }
 
-button{
-background:#0b3d91;
+nav a{
 color:white;
-padding:12px 20px;
-border:none;
-border-radius:5px;
-font-size:16px;
+text-decoration:none;
+margin:0 12px;
+font-weight:bold;
+}
+
+.hero{
+background:#1976d2;
+color:white;
+padding:80px 20px;
+text-align:center;
+}
+
+.hero h1{
+font-size:40px;
+margin-bottom:15px;
+}
+
+.hero p{
+font-size:18px;
+margin-bottom:20px;
+}
+
+.btn{
+display:inline-block;
+background:#ff9800;
+color:white;
+padding:12px 25px;
+border-radius:6px;
+text-decoration:none;
+font-weight:bold;
+}
+
+section{
+padding:50px 20px;
+text-align:center;
+}
+
+.card{
+background:white;
+max-width:900px;
+margin:20px auto;
+padding:20px;
+border-radius:10px;
+box-shadow:0 3px 10px rgba(0,0,0,.15);
 }
 </style>
-
 </head>
+
 <body>
 
 <header>
@@ -42,12 +88,68 @@ font-size:16px;
 <p>Connecting Indian Suppliers with Global Buyers</p>
 </header>
 
-<main>
-<h2>Website Successfully Started ✅</h2>
-<p>Welcome to ExportHub India.</p>
+<nav>
+<a href="#home">Home</a>
+<a href="#about">About</a>
+<a href="#services">Services</a>
+<a href="#products">Products</a>
+<a href="#contact">Contact</a>
+</nav>
 
-<button>Contact Us</button>
-</main>
+<section id="home" class="hero">
+<h1>Global Import & Export Marketplace</h1>
+<p>Buy and Sell Products Worldwide</p>
+<a href="#products" class="btn">Explore Products</a>
+</section>
+<section id="about">
+<h2>About ExportHub India</h2>
+
+<div class="card">
+<p>
+ExportHub India is a global B2B marketplace connecting Indian manufacturers,
+suppliers and exporters with buyers from around the world.
+</p>
+</div>
+</section>
+
+<section id="services">
+<h2>Our Services</h2>
+
+<div class="card">✅ Import Services</div>
+<div class="card">✅ Export Services</div>
+<div class="card">✅ Supplier Verification</div>
+<div class="card">✅ Global Trade Support</div>
+
+</section>
+<section id="products">
+<h2>Our Products</h2>
+
+<div class="card">🌾 Basmati Rice</div>
+<div class="card">🌶️ Indian Spices</div>
+<div class="card">☕ Tea & Coffee</div>
+<div class="card">🌾 Wheat & Sugar</div>
+<div class="card">👕 Garments & Textiles</div>
+<div class="card">💊 Pharmaceuticals</div>
+<div class="card">⚙️ Engineering Goods</div>
+<div class="card">🚗 Auto Parts</div>
+<div class="card">💻 Electronics</div>
+
+</section>
+
+<section id="contact">
+<h2>Contact Us</h2>
+
+<div class="card">
+<p><strong>Email:</strong> veersinghsrikaranpur@gmail.com</p>
+<p><strong>Phone:</strong> +91 6378184092</p>
+<p><strong>Location:</strong> India</p>
+</div>
+
+</section>
+
+<footer style="background:#0b3d91;color:white;text-align:center;padding:20px;">
+<p>© 2026 ExportHub India | All Rights Reserved.</p>
+</footer>
 
 </body>
 </html>
