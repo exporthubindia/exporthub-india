@@ -215,3 +215,21 @@ font-size:17px;
     margin:10px;
     text-align:center;
 }
+/* India Marketplace */
+
+#india-market{
+    text-align:center;
+    padding:50px 20px;
+}
+
+#india-market .card{
+    display:inline-block;
+    width:260px;
+    margin:10px;
+    text-align:center;
+}
+
+#india-market .card h3{
+    color:#0b3d91;
+    margin-bottom:10px;
+}
