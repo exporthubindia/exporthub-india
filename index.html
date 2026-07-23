@@ -588,6 +588,22 @@ window.auth = getAuth(app);
 window.db = getDatabase(app);
 
 console.log("Firebase Connected Successfully");
+    const auth = getAuth(app);
+
+document.getElementById("registerBtn").addEventListener("click", () => {
+
+  const email = document.getElementById("regEmail").value;
+  const password = document.getElementById("regPassword").value;
+
+  createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      alert("Account Created Successfully!");
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
+
+});
   </script>
 </body>
 </html>
