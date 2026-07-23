@@ -204,3 +204,14 @@ font-size:17px;
     margin-top:12px;
     color:#0b3d91;
 }
+#stats{
+    text-align:center;
+    padding:50px 20px;
+}
+
+#stats .card{
+    display:inline-block;
+    width:220px;
+    margin:10px;
+    text-align:center;
+}
