@@ -195,3 +195,12 @@ font-size:17px;
 .categories .btn{
     margin:5px;
 }
+#countries .card img{
+    border-radius:8px;
+}
+
+#countries .card h3{
+    text-align:center;
+    margin-top:12px;
+    color:#0b3d91;
+}
