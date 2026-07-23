@@ -168,3 +168,30 @@ font-size:17px;
 }
 
 }
+/* Countries Section */
+#countries{
+    text-align:center;
+    padding:40px 20px;
+}
+
+#countries .card{
+    display:inline-block;
+    width:220px;
+    margin:10px;
+    padding:18px;
+    text-align:center;
+    border-radius:10px;
+    background:#fff;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    font-weight:bold;
+}
+
+/* Categories */
+.categories{
+    text-align:center;
+    margin:20px 0;
+}
+
+.categories .btn{
+    margin:5px;
+}
