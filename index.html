@@ -475,6 +475,7 @@ style="width:100%;padding:12px;margin:8px 0;">
 <div class="card">
 <input type="text" placeholder="Full Name"
 style="width:100%;padding:12px;margin:8px 0;">
+style="width:100%;padding:12px;margin:8px 0;">
 
 <input id="regEmail" type="email" placeholder="Email"
 style="width:100%;padding:12px;margin:8px 0;">
@@ -566,7 +567,10 @@ style="width:100%;padding:12px;margin:8px 0;">
 </footer>
   <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import { getDatabase } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 const firebaseConfig = {
