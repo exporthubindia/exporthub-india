@@ -635,6 +635,19 @@ alert(error.message);
 });
 
 });
+    document.getElementById("resetBtn").addEventListener("click", () => {
+
+const email = document.querySelector("#login input[type=email]").value;
+
+sendPasswordResetEmail(auth, email)
+.then(() => {
+alert("Password reset email sent! Gmail inbox check karo.");
+})
+.catch((error) => {
+alert(error.message);
+});
+
+});
     document.querySelector("#sell-product a.btn").addEventListener("click", () => {
 
 alert("Product Upload System Ready - Next Step Firebase Save");
