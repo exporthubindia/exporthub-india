@@ -590,8 +590,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-window.auth = getAuth(app);
-window.db = getDatabase(app);
+const auth = getAuth(app);
+const db = getDatabase(app);
 
 console.log("Firebase Connected Successfully");
     
