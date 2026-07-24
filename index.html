@@ -466,6 +466,7 @@ style="width:100%;padding:12px;margin:8px 0;">
 style="width:100%;padding:12px;margin:8px 0;">
 
 <button type="button" id="loginBtn" class="btn">Login</button>
+  <button type="button" id="resetBtn" class="btn">🔑 Forgot Password</button>
 </div>
 </section>
 
@@ -569,7 +570,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebas
 import {
   getAuth,
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import {
   getDatabase,
