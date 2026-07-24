@@ -594,7 +594,7 @@ window.auth = getAuth(app);
 window.db = getDatabase(app);
 
 console.log("Firebase Connected Successfully");
-    const auth = getAuth(app);
+    
 
 document.getElementById("registerBtn").addEventListener("click", () => {
 
@@ -618,6 +618,20 @@ document.getElementById("registerBtn").addEventListener("click", () => {
     .catch((error) => {
       alert(error.message);
     });
+
+});
+    document.getElementById("loginBtn").addEventListener("click", () => {
+
+const email = document.querySelector("#login input[type=email]").value;
+const password = document.querySelector("#login input[type=password]").value;
+
+signInWithEmailAndPassword(auth,email,password)
+.then(() => {
+alert("Login Successful!");
+})
+.catch((error)=>{
+alert(error.message);
+});
 
 });
   </script>
