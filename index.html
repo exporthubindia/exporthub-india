@@ -465,7 +465,7 @@ style="width:100%;padding:12px;margin:8px 0;">
 <input type="password" placeholder="Password"
 style="width:100%;padding:12px;margin:8px 0;">
 
-<a href="#" class="btn">Login</a>
+<button id="loginBtn" class="btn">Login</button>
 </div>
 </section>
 
@@ -569,7 +569,8 @@ style="width:100%;padding:12px;margin:8px 0;">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import {
   getAuth,
-  createUserWithEmailAndPassword
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import {
   getDatabase,
