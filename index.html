@@ -627,9 +627,12 @@ const email = document.querySelector("#login input[type=email]").value;
 const password = document.querySelector("#login input[type=password]").value;
 
 signInWithEmailAndPassword(auth,email,password)
-.then(() => {
+
+  document.querySelector("#login h2").innerHTML = "✅ Welcome Veer Singh";
+
+document.getElementById("loginBtn").style.display = "none";
+
 alert("Login Successful!");
-})
 .catch((error)=>{
 alert(error.message);
 });
