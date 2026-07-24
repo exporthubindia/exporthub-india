@@ -473,7 +473,7 @@ style="width:100%;padding:12px;margin:8px 0;">
 <h2>📝 Register</h2>
 
 <div class="card">
-<input type="text" placeholder="Full Name"
+<input id="regName" type="text" placeholder="Full Name"
 style="width:100%;padding:12px;margin:8px 0;">
 
 <input id="regEmail" type="email" placeholder="Email"
@@ -570,7 +570,11 @@ import {
   getAuth,
   createUserWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-import { getDatabase } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+import {
+  getDatabase,
+  ref,
+  set
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDK8hxBdK7SNUY6qHqvtKsg9FB4IotvWYA",
@@ -597,8 +601,18 @@ document.getElementById("registerBtn").addEventListener("click", () => {
 
   createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
-      alert("Account Created Successfully!");
-    })
+
+  set(
+    ref(db, "users/" + userCredential.user.uid),
+    {
+      name: document.getElementById("regName").value,
+      email: email
+    }
+  );
+
+  alert("Account Created Successfully!");
+
+})
     .catch((error) => {
       alert(error.message);
     });
