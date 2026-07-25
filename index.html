@@ -634,7 +634,8 @@ document.querySelector("#login h2").innerHTML = "✅ Welcome Veer Singh";
 document.getElementById("loginBtn").style.display = "none";
 
 alert("Login Successful!");
-
+document.querySelector("#login input[type=email]").style.display = "none";
+document.querySelector("#login input[type=password]").style.display = "none";
 })
 .catch((error)=>{
 alert(error.message);
