@@ -568,9 +568,10 @@ style="width:100%;padding:12px;margin:8px 0;">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import {
   getAuth,
-  createUserWithEmailAndPassword,
+ createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import {
   getDatabase,
@@ -660,6 +661,15 @@ alert(error.message);
 
 alert("Product Upload System Ready - Next Step Firebase Save");
 
+});
+    onAuthStateChanged(auth, (user) => {
+  if (user) {
+    document.querySelector("#login h2").innerHTML = "✅ Welcome Veer Singh";
+    document.querySelector("#login .card").style.display = "none";
+  } else {
+    document.querySelector("#login h2").innerHTML = "🔐 Login";
+    document.querySelector("#login .card").style.display = "block";
+  }
 });
   </script>
 </body>
