@@ -731,7 +731,9 @@ onValue(productsRef, (snapshot) => {
         <p>💰 ${p.price}</p>
         <p>📂 ${p.category}</p>
         <p>${p.description}</p>
-        <a href="#checkout" class="btn">🛒 Buy Now</a>
+        <button class="btn" onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})">
+🛒 Buy Now
+</button>
       </div>
     `;
   });
