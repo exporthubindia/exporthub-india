@@ -665,7 +665,21 @@ alert(error.message);
 });
   
 document.getElementById("uploadBtn").addEventListener("click", () => {
+document.getElementById("uploadBtn").addEventListener("click", () => {
 
+console.log(document.getElementById("productName").value);
+console.log(document.getElementById("productPrice").value);
+console.log(document.getElementById("productCategory").value);
+console.log(document.getElementById("productDescription").value);
+
+const product = {
+  name: document.getElementById("productName").value,
+  price: document.getElementById("productPrice").value,
+  category: document.getElementById("productCategory").value,
+  description: document.getElementById("productDescription").value
+};
+
+push(ref(db, "products"), product)
 const product = {
   name: document.getElementById("productName").value,
   price: document.getElementById("productPrice").value,
