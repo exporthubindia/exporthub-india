@@ -650,7 +650,8 @@ const password = document.querySelector("#login input[type=password]").value;
 signInWithEmailAndPassword(auth,email,password)
 .then(() => {
 
-document.querySelector("#login h2").innerHTML = "✅ Welcome Veer Singh";
+document.querySelector("#login h2").innerHTML =
+"✅ Welcome " + auth.currentUser.email;
 
 document.getElementById("loginBtn").style.display = "none";
 
