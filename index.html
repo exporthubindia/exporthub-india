@@ -508,7 +508,9 @@ style="width:100%;padding:12px;margin:8px 0;">
 <textarea id="productDescription" placeholder="Product Description"
 style="width:100%;padding:12px;margin:8px 0;height:100px;"></textarea>
 
-<a href="#" class="btn">📤 Upload Product</a>
+<button type="button" id="uploadBtn" class="btn">
+📤 Upload Product
+</button>
 
 </div>
   </section>
@@ -660,8 +662,8 @@ alert(error.message);
 });
 
 });
-    document.querySelector("#sell-product a.btn").addEventListener("click", () => {
-
+  
+document.getElementById("uploadBtn").addEventListener("click", () => {
 alert("Product Upload System Ready - Next Step Firebase Save");
 
 });
