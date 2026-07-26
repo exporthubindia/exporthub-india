@@ -514,6 +514,18 @@ style="width:100%;padding:12px;margin:8px 0;height:100px;"></textarea>
 
 </div>
   </section>
+  <section id="uploaded-products">
+<h2>📦 Uploaded Products</h2>
+
+<div id="allProducts"></div>
+
+  </section>
+  <section id="uploaded-products">
+<h2>📦 Uploaded Products</h2>
+
+<div id="allProducts"></div>
+
+  </section>
   <section id="checkout">
 
 <h2>💳 Checkout</h2>
@@ -581,7 +593,8 @@ import {
   getDatabase,
   ref,
   set,
-  push
+  push,
+  onValue
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -707,6 +720,26 @@ push(ref(db, "products"), product)
     document.querySelector("#login h2").innerHTML = "🔐 Login";
     document.querySelector("#login .card").style.display = "block";
   }
+});
+    const productsRef = ref(db, "products");
+
+onValue(productsRef, (snapshot) => {
+  const box = document.getElementById("allProducts");
+  box.innerHTML = "";
+
+  snapshot.forEach((child) => {
+    const p = child.val();
+
+    box.innerHTML += `
+      <div class="card">
+        <h3>${p.name}</h3>
+        <p>💰 ${p.price}</p>
+        <p>📂 ${p.category}</p>
+        <p>${p.description}</p>
+        <a href="#checkout" class="btn">🛒 Buy Now</a>
+      </div>
+    `;
+  });
 });
   </script>
 </body>
