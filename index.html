@@ -671,7 +671,12 @@ console.log(document.getElementById("productName").value);
 console.log(document.getElementById("productPrice").value);
 console.log(document.getElementById("productCategory").value);
 console.log(document.getElementById("productDescription").value);
-
+alert(
+"Name: " + document.getElementById("productName").value +
+"\nPrice: " + document.getElementById("productPrice").value +
+"\nCategory: " + document.getElementById("productCategory").value +
+"\nDescription: " + document.getElementById("productDescription").value
+);
 const product = {
   name: document.getElementById("productName").value,
   price: document.getElementById("productPrice").value,
