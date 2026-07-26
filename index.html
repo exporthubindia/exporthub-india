@@ -665,7 +665,26 @@ alert(error.message);
 });
   
 document.getElementById("uploadBtn").addEventListener("click", () => {
-alert("Product Upload System Ready - Next Step Firebase Save");
+
+const product = {
+  name: document.getElementById("productName").value,
+  price: document.getElementById("productPrice").value,
+  category: document.getElementById("productCategory").value,
+  description: document.getElementById("productDescription").value
+};
+
+push(ref(db, "products"), product)
+.then(() => {
+  alert("✅ Product Uploaded Successfully!");
+
+  document.getElementById("productName").value = "";
+  document.getElementById("productPrice").value = "";
+  document.getElementById("productCategory").value = "";
+  document.getElementById("productDescription").value = "";
+})
+.catch((error) => {
+  alert(error.message);
+});
 
 });
     onAuthStateChanged(auth, (user) => {
