@@ -468,6 +468,9 @@ style="width:100%;padding:12px;margin:8px 0;">
 
 <button type="button" id="loginBtn" class="btn">Login</button>
   <button type="button" id="resetBtn" class="btn">🔑 Forgot Password</button>
+  <button type="button" id="logoutBtn" class="btn" style="display:none;">
+🚪 Logout
+  </button>
 </div>
 </section>
 
@@ -616,6 +619,11 @@ console.log("Firebase Connected Successfully");
     
 
 document.getElementById("registerBtn").addEventListener("click", () => {
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+  signOut(auth).then(() => {
+    alert("Logged Out Successfully!");
+  });
+});
 
   const email = document.getElementById("regEmail").value;
   const password = document.getElementById("regPassword").value;
