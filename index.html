@@ -745,7 +745,10 @@ document.getElementById("logoutBtn").style.display = "inline-block";
     document.getElementById("logoutBtn").style.display = "inline-block";
 
   } else {
-
+document.querySelector("#login input[type=email]").style.display = "block";
+document.querySelector("#login input[type=password]").style.display = "block";
+document.getElementById("loginBtn").style.display = "inline-block";
+document.getElementById("resetBtn").style.display = "inline-block";
     document.querySelector("#login h2").innerHTML = "🔐 Login";
     
     document.getElementById("register").style.display = "block";
