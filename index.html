@@ -648,7 +648,7 @@ signInWithEmailAndPassword(auth,email,password)
 .then(() => {
 
 document.querySelector("#login h2").innerHTML =
-"✅ Welcome " + user.email;
+"✅ Welcome " + auth.currentUser.email;
 
 document.getElementById("loginBtn").style.display = "none";
 
@@ -714,7 +714,8 @@ push(ref(db, "products"), product)
 });
     onAuthStateChanged(auth, (user) => {
   if (user) {
-    document.querySelector("#login h2").innerHTML = "✅ Welcome Veer Singh";
+    document.querySelector("#login h2").innerHTML =
+"✅ Welcome " + user.email;
     document.querySelector("#login .card").style.display = "none";
   } else {
     document.querySelector("#login h2").innerHTML = "🔐 Login";
