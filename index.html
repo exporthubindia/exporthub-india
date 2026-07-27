@@ -788,14 +788,11 @@ document.getElementById("placeOrderBtn").addEventListener("click", () => {
 });
 onValue(productsRef, (snapshot) => {
 
-    user: auth.currentUser.email,
-    name: document.getElementById("checkoutName").value,
-    mobile: document.getElementById("checkoutMobile").value,
-    address: document.getElementById("check
   const box = document.getElementById("allProducts");
   box.innerHTML = "";
 
   snapshot.forEach((child) => {
+
     const p = child.val();
 
     box.innerHTML += `
@@ -804,12 +801,17 @@ onValue(productsRef, (snapshot) => {
         <p>💰 ${p.price}</p>
         <p>📂 ${p.category}</p>
         <p>${p.description}</p>
-        <button class="btn" onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})">
-🛒 Buy Now
-</button>
+
+        <button class="btn"
+        onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})">
+        🛒 Buy Now
+        </button>
+
       </div>
     `;
+
   });
+
 });
   </script>
 </body>
