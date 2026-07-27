@@ -713,14 +713,23 @@ push(ref(db, "products"), product)
 
 });
     onAuthStateChanged(auth, (user) => {
+
   if (user) {
+
     document.querySelector("#login h2").innerHTML =
-"✅ Welcome " + user.email;
+      "✅ Welcome<br>" + user.email;
+
     document.querySelector("#login .card").style.display = "none";
+    document.getElementById("register").style.display = "none";
+
   } else {
+
     document.querySelector("#login h2").innerHTML = "🔐 Login";
     document.querySelector("#login .card").style.display = "block";
+    document.getElementById("register").style.display = "block";
+
   }
+
 });
     const productsRef = ref(db, "products");
 
