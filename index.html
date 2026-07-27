@@ -757,9 +757,7 @@ document.getElementById("resetBtn").style.display = "inline-block";
 
 });
     const productsRef = ref(db, "products");
-
-onValue(productsRef, (snapshot) => {
-  document.getElementById("placeOrderBtn").addEventListener("click", () => {
+document.getElementById("placeOrderBtn").addEventListener("click", () => {
 
   if (!auth.currentUser) {
     alert("⚠️ Please Login First");
@@ -776,7 +774,6 @@ onValue(productsRef, (snapshot) => {
 
   push(ref(db, "orders"), order)
     .then(() => {
-
       alert("✅ Order Placed Successfully!");
 
       document.getElementById("checkoutName").value = "";
@@ -789,6 +786,12 @@ onValue(productsRef, (snapshot) => {
     });
 
 });
+onValue(productsRef, (snapshot) => {
+
+    user: auth.currentUser.email,
+    name: document.getElementById("checkoutName").value,
+    mobile: document.getElementById("checkoutMobile").value,
+    address: document.getElementById("check
   const box = document.getElementById("allProducts");
   box.innerHTML = "";
 
