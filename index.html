@@ -594,7 +594,8 @@ import {
   ref,
   set,
   push,
-  onValue
+  onValue,
+  get
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -758,6 +759,36 @@ document.getElementById("resetBtn").style.display = "inline-block";
     const productsRef = ref(db, "products");
 
 onValue(productsRef, (snapshot) => {
+  document.getElementById("placeOrderBtn").addEventListener("click", () => {
+
+  if (!auth.currentUser) {
+    alert("⚠️ Please Login First");
+    return;
+  }
+
+  const order = {
+    user: auth.currentUser.email,
+    name: document.getElementById("checkoutName").value,
+    mobile: document.getElementById("checkoutMobile").value,
+    address: document.getElementById("checkoutAddress").value,
+    date: new Date().toLocaleString()
+  };
+
+  push(ref(db, "orders"), order)
+    .then(() => {
+
+      alert("✅ Order Placed Successfully!");
+
+      document.getElementById("checkoutName").value = "";
+      document.getElementById("checkoutMobile").value = "";
+      document.getElementById("checkoutAddress").value = "";
+
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
+
+});
   const box = document.getElementById("allProducts");
   box.innerHTML = "";
 
