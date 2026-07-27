@@ -665,7 +665,11 @@ document.querySelector("#login h2").innerHTML =
 document.getElementById("loginBtn").style.display = "none";
 
 alert("Login Successful!");
-  document.querySelector("#login .card").style.display = "none";
+  document.querySelector("#login input[type=email]").style.display = "none";
+document.querySelector("#login input[type=password]").style.display = "none";
+document.getElementById("loginBtn").style.display = "none";
+document.getElementById("resetBtn").style.display = "none";
+document.getElementById("logoutBtn").style.display = "inline-block";
   document.getElementById("resetBtn").style.display = "none";
 document.querySelector("#login input[type=email]").style.display = "none";
 document.querySelector("#login input[type=password]").style.display = "none";
@@ -732,7 +736,11 @@ push(ref(db, "products"), product)
     document.querySelector("#login h2").innerHTML =
       "✅ Welcome<br>" + user.email;
 
-    document.querySelector("#login .card").style.display = "none";
+    document.querySelector("#login input[type=email]").style.display = "none";
+document.querySelector("#login input[type=password]").style.display = "none";
+document.getElementById("loginBtn").style.display = "none";
+document.getElementById("resetBtn").style.display = "none";
+document.getElementById("logoutBtn").style.display = "inline-block";
     document.getElementById("register").style.display = "none";
     document.getElementById("logoutBtn").style.display = "inline-block";
 
