@@ -825,7 +825,12 @@ onValue(productsRef, (snapshot) => {
   snapshot.forEach((child) => {
 
     const p = child.val();
-
+if (
+  searchBox.value &&
+  !p.name.toLowerCase().includes(searchBox.value.toLowerCase())
+) {
+  return;
+}
     box.innerHTML += `
 <div class="card">
 
