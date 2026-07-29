@@ -802,17 +802,29 @@ onValue(productsRef, (snapshot) => {
         <p>💰 ${p.price}</p>
         <p>📂 ${p.category}</p>
         <p>${p.description}</p>
+<button class="btn addCartBtn">
+🛒 Add to Cart
+</button>
 
-        <button class="btn"
-        onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})">
-        🛒 Buy Now
-        </button>
+<button class="btn"
+onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})">
+💳 Buy Now
+</button>
 
       </div>
     `;
 
   });
 
+});
+    let cart = 0;
+
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("addCartBtn")) {
+    cart++;
+    document.getElementById("cartCount").innerText = cart;
+    alert("✅ Product Added to Cart");
+  }
 });
   </script>
 </body>
