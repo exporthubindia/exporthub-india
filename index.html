@@ -787,6 +787,7 @@ document.getElementById("resetBtn").style.display = "inline-block";
 
 });
     const productsRef = ref(db, "products");
+    const searchBox = document.getElementById("searchBox");
 document.getElementById("placeOrderBtn").addEventListener("click", () => {
 
   if (!auth.currentUser) {
