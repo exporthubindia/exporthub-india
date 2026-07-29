@@ -575,6 +575,15 @@ style="width:100%;padding:12px;margin:8px 0;height:100px;"></textarea>
 </div>
 
   </section>
+  <section id="cart">
+
+<h2>🛒 Shopping Cart</h2>
+
+<div id="cartItems" class="card">
+No products added yet.
+</div>
+
+  </section>
 <footer style="background:#0b3d91;color:white;text-align:center;padding:12px;font-size:14px;">
 <p>© 2026 ExportHub India | Global Trade Network</p>
 </footer>
@@ -817,12 +826,30 @@ onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})
   });
 
 });
-    let cart = 0;
+    let cart = [];
+const cartBox = document.getElementById("cartItems");
 
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains("addCartBtn")) {
-    cart++;
-    document.getElementById("cartCount").innerText = cart;
+
+    const card = e.target.closest(".card");
+    const name = card.querySelector("h3").innerText;
+    const price = card.querySelector("p").innerText;
+
+    cart.push({name, price});
+
+    document.getElementById("cartCount").innerText = cart.length;
+
+    cartBox.innerHTML = "";
+
+    cart.forEach(item => {
+      cartBox.innerHTML += `
+      <div class="card">
+        <h3>${item.name}</h3>
+        <p>${item.price}</p>
+      </div>`;
+    });
+
     alert("✅ Product Added to Cart");
   }
 });
