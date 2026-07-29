@@ -637,7 +637,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
     setPersistence(auth, browserLocalPersistence);
 const db = getDatabase(app);
-
+const storage = getStorage(app);
 console.log("Firebase Connected Successfully");
     document.getElementById("logoutBtn").addEventListener("click", () => {
   signOut(auth)
