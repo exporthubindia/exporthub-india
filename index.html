@@ -861,7 +861,51 @@ onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})
 });
     let cart = [];
 const cartBox = document.getElementById("cartItems");
+searchBox.addEventListener("input", () => {
+  onValue(productsRef, (snapshot) => {
 
+    const box = document.getElementById("allProducts");
+    box.innerHTML = "";
+
+    snapshot.forEach((child) => {
+
+      const p = child.val();
+
+      if (
+        searchBox.value &&
+        !p.name.toLowerCase().includes(searchBox.value.toLowerCase())
+      ) {
+        return;
+      }
+
+      box.innerHTML += `
+      <div class="card">
+
+        <img src="${p.image}"
+        style="width:100%;height:180px;object-fit:cover;border-radius:8px;">
+
+        <h3>${p.name}</h3>
+
+        <p>💰 ${p.price}</p>
+
+        <p>📂 ${p.category}</p>
+
+        <p>${p.description}</p>
+
+        <button class="btn addCartBtn">🛒 Add to Cart</button>
+
+        <button class="btn"
+        onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})">
+        💳 Buy Now
+        </button>
+
+      </div>
+      `;
+
+    });
+
+  });
+});
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains("addCartBtn")) {
 
