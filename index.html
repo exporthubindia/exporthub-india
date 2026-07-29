@@ -616,7 +616,12 @@ import {
   onValue,
   get
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
 const firebaseConfig = {
   apiKey: "AIzaSyDK8hxBdK7SNUY6qHqvtKsg9FB4IotvWYA",
   authDomain: "exporthub-india-87d31.firebaseapp.com",
