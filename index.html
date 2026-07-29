@@ -717,39 +717,44 @@ alert(error.message);
 
 });
   
-document.getElementById("uploadBtn").addEventListener("click", () => {
+document.getElementById("uploadBtn").addEventListener("click", async () => {
 
+  const file = document.getElementById("productImage").files[0];
 
-console.log(document.getElementById("productName").value);
-console.log(document.getElementById("productPrice").value);
-console.log(document.getElementById("productCategory").value);
-console.log(document.getElementById("productDescription").value);
-alert(
-"Name: " + document.getElementById("productName").value +
-"\nPrice: " + document.getElementById("productPrice").value +
-"\nCategory: " + document.getElementById("productCategory").value +
-"\nDescription: " + document.getElementById("productDescription").value
-);
-const product = {
-  name: document.getElementById("productName").value,
-  price: document.getElementById("productPrice").value,
-  category: document.getElementById("productCategory").value,
-  description: document.getElementById("productDescription").value
-};
+  if (!file) {
+    alert("⚠️ Please Select Product Image");
+    return;
+  }
 
-push(ref(db, "products"), product)
+  const imageRef = storageRef(storage, "products/" + Date.now() + "_" + file.name);
 
-.then(() => {
-  alert("✅ Product Uploaded Successfully!");
+  try {
 
-  document.getElementById("productName").value = "";
-  document.getElementById("productPrice").value = "";
-  document.getElementById("productCategory").value = "";
-  document.getElementById("productDescription").value = "";
-})
-.catch((error) => {
-  alert(error.message);
-});
+    await uploadBytes(imageRef, file);
+
+    const imageURL = await getDownloadURL(imageRef);
+
+    const product = {
+      name: document.getElementById("productName").value,
+      price: document.getElementById("productPrice").value,
+      category: document.getElementById("productCategory").value,
+      description: document.getElementById("productDescription").value,
+      image: imageURL
+    };
+
+    await push(ref(db, "products"), product);
+
+    alert("✅ Product Uploaded Successfully!");
+
+    document.getElementById("productName").value = "";
+    document.getElementById("productPrice").value = "";
+    document.getElementById("productCategory").value = "";
+    document.getElementById("productDescription").value = "";
+    document.getElementById("productImage").value = "";
+
+  } catch (error) {
+    alert(error.message);
+  }
 
 });
     onAuthStateChanged(auth, (user) => {
