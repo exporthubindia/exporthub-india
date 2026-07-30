@@ -640,6 +640,7 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 const storage = getStorage(app);
 console.log("Firebase Connected Successfully");
+    alert("JavaScript Loaded");
     document.getElementById("logoutBtn").addEventListener("click", () => {
   signOut(auth)
     .then(() => {
