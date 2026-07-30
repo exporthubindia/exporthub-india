@@ -927,6 +927,21 @@ document.addEventListener("click", (e) => {
     alert("✅ Product Added to Cart");
   }
 });
+    // Search Static Products
+const staticSearch = document.getElementById("searchBox");
+const staticCards = document.querySelectorAll("#productList .card");
+
+staticSearch.addEventListener("keyup", function () {
+  const value = this.value.toLowerCase();
+
+  staticCards.forEach(card => {
+    if (card.innerText.toLowerCase().includes(value)) {
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
+    }
+  });
+});
   </script>
 </body>
 </html>
