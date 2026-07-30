@@ -593,6 +593,9 @@ class="btn"
 onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})">
 💳 Proceed to Checkout
 </button>
+    <button class="btn shareBtn">
+📤 Share Product
+    </button>
   </section>
 <footer style="background:#0b3d91;color:white;text-align:center;padding:12px;font-size:14px;">
 <p>© 2026 ExportHub India | Global Trade Network</p>
@@ -942,6 +945,40 @@ staticSearch.addEventListener("keyup", function () {
       card.style.display = "none";
     }
   });
+});
+    function shareProduct(name, price){
+
+let message =
+"🌍 ExportHub India\n\n" +
+"Product: " + name +
+"\nPrice: " + price +
+"\n\nBuy from ExportHub India";
+
+if(navigator.share){
+  navigator.share({
+    title:"ExportHub India Product",
+    text:message
+  });
+}else{
+  alert(message);
+}
+
+}
+
+
+document.addEventListener("click", (e)=>{
+
+if(e.target.classList.contains("shareBtn")){
+
+const card = e.target.closest(".card");
+
+const name = card.querySelector("h3").innerText;
+const price = card.querySelector("p").innerText;
+
+shareProduct(name, price);
+
+}
+
 });
   </script>
 </body>
