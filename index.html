@@ -1050,20 +1050,24 @@ document.addEventListener("click", (e) => {
     alert("✅ Product Added to Cart");
   }
 });
-    // Search Static Products
-const staticSearch = document.getElementById("searchBox");
-const staticCards = document.querySelectorAll("#productList .card");
+    // const searchBox = document.getElementById("searchBox");
 
-staticSearch.addEventListener("keyup", function () {
+searchBox.addEventListener("input", function () {
+
   const value = this.value.toLowerCase();
 
-  staticCards.forEach(card => {
-    if (card.innerText.toLowerCase().includes(value)) {
-      card.style.display = "block";
-    } else {
-      card.style.display = "none";
-    }
+  // Static Products
+  document.querySelectorAll("#productList .card").forEach(card => {
+    card.style.display =
+      card.innerText.toLowerCase().includes(value) ? "block" : "none";
   });
+
+  // Uploaded Products
+  document.querySelectorAll("#allProducts .card").forEach(card => {
+    card.style.display =
+      card.innerText.toLowerCase().includes(value) ? "block" : "none";
+  });
+
 });
     function shareProduct(name, price){
 
