@@ -1133,7 +1133,32 @@ shareProduct(name, price);
 }
 
 })
-    
+    document.addEventListener("click", (e) => {
+
+  const card = e.target.closest(".productCard");
+  if (!card) return;
+
+  document.getElementById("detailImage").src =
+    card.querySelector("img").src;
+
+  document.getElementById("detailName").innerText =
+    card.querySelector("h3").innerText;
+
+  document.getElementById("detailPrice").innerText =
+    card.querySelectorAll("p")[0].innerText;
+
+  document.getElementById("detailCategory").innerText =
+    card.querySelectorAll("p")[1].innerText;
+
+  document.getElementById("detailDescription").innerText =
+    card.querySelectorAll("p")[2].innerText;
+
+  document.getElementById("product-details").style.display = "block";
+
+  document.getElementById("product-details")
+    .scrollIntoView({ behavior: "smooth" });
+
+});
   </script>
 </body>
 </html>
