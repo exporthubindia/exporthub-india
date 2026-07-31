@@ -963,7 +963,46 @@ document.getElementById("resetBtn").style.display = "inline-block";
 
 });
     const productsRef = ref(db, "products");
-    
+    window.editProduct = async function(productKey) {
+
+  const newName = prompt("New Product Name");
+  if (newName === null) return;
+
+  const newPrice = prompt("New Price");
+  if (newPrice === null) return;
+
+  const newCategory = prompt("New Category");
+  if (newCategory === null) return;
+
+  const newDescription = prompt("New Description");
+  if (newDescription === null) return;
+
+  try {
+    await update(ref(db, "products/" + productKey), {
+      name: newName,
+      price: newPrice,
+      category: newCategory,
+      description: newDescription
+    });
+
+    alert("✅ Product Updated Successfully!");
+  } catch (error) {
+    alert(error.message);
+  }
+};
+
+window.deleteProduct = async function(productKey) {
+
+  if (!confirm("Delete this product?")) return;
+
+  try {
+    await remove(ref(db, "products/" + productKey));
+    alert("✅ Product Deleted Successfully!");
+  } catch (error) {
+    alert(error.message);
+  }
+
+};
     const ordersRef = ref(db, "orders");
     const searchBox = document.getElementById("searchBox");
     searchBox.addEventListener("input", () => {
