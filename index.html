@@ -1128,6 +1128,13 @@ onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})
 <button class="btn shareBtn">
 📤 Share Product
 </button>
+<button class="btn" onclick="editProduct('${child.key}')">
+✏️ Edit
+</button>
+
+<button class="btn" onclick="deleteProduct('${child.key}')">
+🗑️ Delete
+</button>
       </div>
     `;
 
