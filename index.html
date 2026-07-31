@@ -1056,10 +1056,22 @@ onValue(productsRef, (snapshot) => {
 
   const box = document.getElementById("allProducts");
   box.innerHTML = "";
-
+const adminBox = document.getElementById("adminProducts");
+adminBox.innerHTML = "";
   snapshot.forEach((child) => {
 
     const p = child.val();
+    const key = child.key;
+
+adminBox.innerHTML += `
+<div class="card">
+  <h3>${p.name}</h3>
+  <p>💰 ${p.price}</p>
+  <button class="btn" onclick="deleteProduct('${key}')">
+    🗑 Delete Product
+  </button>
+</div>
+`;
 if (
   searchBox.value &&
   !p.name.toLowerCase().includes(searchBox.value.toLowerCase())
