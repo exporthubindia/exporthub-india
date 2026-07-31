@@ -964,7 +964,25 @@ document.getElementById("resetBtn").style.display = "inline-block";
 });
     const productsRef = ref(db, "products");
     window.deleteProduct = async function(productKey) {
+window.editProduct = async function(productKey) {
 
+  const newName = prompt("Enter New Product Name");
+
+  if (!newName) return;
+
+  try {
+
+    await update(ref(db, "products/" + productKey), {
+      name: newName
+    });
+
+    alert("✅ Product Updated Successfully!");
+
+  } catch (error) {
+    alert(error.message);
+  }
+
+};
   if (!confirm("Delete this product?")) return;
 
   try {
@@ -1068,6 +1086,9 @@ adminBox.innerHTML += `
 <div class="card">
   <h3>${p.name}</h3>
   <p>💰 ${p.price}</p>
+  <button class="btn" onclick="editProduct('${key}')">
+✏️ Edit Product
+</button>
   <button class="btn" onclick="deleteProduct('${key}')">
     🗑 Delete Product
   </button>
