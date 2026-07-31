@@ -898,10 +898,16 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
 
   const file = document.getElementById("productImage").files[0];
 
-  if (!file) {
-    alert("⚠️ Please Select Product Image");
-    return;
-  }
+  let imageURL = "";
+
+if (productImage.files.length > 0) {
+  const file = productImage.files[0];
+
+  const storageRef = ref(storage, "products/" + Date.now() + "_" + file.name);
+
+  await uploadBytes(storageRef, file);
+  imageURL = await getDownloadURL(storageRef);
+}
 
   const imageRef = storageRef(storage, "products/" + Date.now() + "_" + file.name);
 
