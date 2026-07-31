@@ -1169,6 +1169,43 @@ shareProduct(name, price);
     .scrollIntoView({ behavior: "smooth" });
 
 });
+    onValue(ordersRef, (snapshot) => {
+
+  const ordersBox = document.getElementById("ordersList");
+  ordersBox.innerHTML = "";
+
+  if (!auth.currentUser) {
+    ordersBox.innerHTML = "⚠️ Please Login First";
+    return;
+  }
+
+  let found = false;
+
+  snapshot.forEach((child) => {
+
+    const order = child.val();
+
+    if (order.user === auth.currentUser.email) {
+
+      found = true;
+
+      ordersBox.innerHTML += `
+      <div class="card">
+        <h3>📦 ${order.name}</h3>
+        <p>📱 ${order.mobile}</p>
+        <p>📍 ${order.address}</p>
+        <p>🕒 ${order.date}</p>
+      </div>
+      `;
+    }
+
+  });
+
+  if (!found) {
+    ordersBox.innerHTML = "No Orders Yet.";
+  }
+
+});
   </script>
 </body>
 </html>
