@@ -966,14 +966,25 @@ document.getElementById("resetBtn").style.display = "inline-block";
     window.deleteProduct = async function(productKey) {
 window.editProduct = async function(productKey) {
 
-  const newName = prompt("Enter New Product Name");
+  const newName = prompt("New Product Name");
+  if (newName === null) return;
 
-  if (!newName) return;
+  const newPrice = prompt("New Price");
+  if (newPrice === null) return;
+
+  const newCategory = prompt("New Category");
+  if (newCategory === null) return;
+
+  const newDescription = prompt("New Description");
+  if (newDescription === null) return;
 
   try {
 
     await update(ref(db, "products/" + productKey), {
-      name: newName
+      name: newName,
+      price: newPrice,
+      category: newCategory,
+      description: newDescription
     });
 
     alert("✅ Product Updated Successfully!");
