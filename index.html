@@ -727,6 +727,15 @@ onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})
 </div>
 
   </section>
+  <section id="my-orders">
+
+<h2>📦 My Orders</h2>
+
+<div id="ordersList" class="card">
+No Orders Yet.
+</div>
+
+  </section>
   <section id="cart">
 
 <h2>🛒 Shopping Cart</h2>
@@ -939,6 +948,7 @@ document.getElementById("resetBtn").style.display = "inline-block";
 
 });
     const productsRef = ref(db, "products");
+    const ordersRef = ref(db, "orders");
     const searchBox = document.getElementById("searchBox");
     searchBox.addEventListener("input", () => {
   get(productsRef).then((snapshot) => {
