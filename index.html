@@ -749,6 +749,13 @@ No Orders Yet.
 </div>
 
   </section>
+  <section id="wishlist">
+  <h2>❤️ My Wishlist</h2>
+
+  <div id="wishlistItems" class="card">
+    No wishlist items.
+  </div>
+  </section>
   <section id="cart">
 
 <h2>🛒 Shopping Cart</h2>
@@ -1144,7 +1151,7 @@ onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})
 
 });
     let cart = [];
-    let wishlist = [];
+    const wishlistBox = document.getElementById("wishlistItems");
 
 document.addEventListener("click", (e) => {
 
@@ -1155,9 +1162,16 @@ document.addEventListener("click", (e) => {
     const name = card.querySelector("h3").innerText;
     const price = card.querySelector("p").innerText;
 
-    wishlist.push({
-      name: name,
-      price: price
+    wishlist.push({ name, price });
+
+    wishlistBox.innerHTML = "";
+
+    wishlist.forEach(item => {
+      wishlistBox.innerHTML += `
+      <div class="card">
+        <h3>${item.name}</h3>
+        <p>${item.price}</p>
+      </div>`;
     });
 
     alert("❤️ Product Added to Wishlist");
