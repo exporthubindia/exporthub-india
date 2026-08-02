@@ -1262,7 +1262,13 @@ shareProduct(name, price);
 
 })
     document.addEventListener("click", (e) => {
-
+if (
+  e.target.classList.contains("wishlistBtn") ||
+  e.target.classList.contains("addCartBtn") ||
+  e.target.classList.contains("shareBtn")
+) {
+  return;
+}
   const card = e.target.closest(".productCard");
   if (!card) return;
 
