@@ -1044,7 +1044,7 @@ window.deleteProduct = async function(productKey) {
 ⭐ ⭐ ⭐ ⭐ ⭐
 </div>
 
-<button class="btn ratingBtn">
+<button class="btn ratingBtn" data-key="${key}">
 ⭐ Rate Product
 </button>
 <button class="btn addCartBtn">🛒 Add to Cart</button>
@@ -1135,7 +1135,7 @@ style="width:100%;height:180px;object-fit:cover;border-radius:8px;">
 ⭐ ⭐ ⭐ ⭐ ⭐
 </div>
 
-<button class="btn ratingBtn">
+<button class="btn ratingBtn" data-key="${child.key}">
 ⭐ Rate Product
 </button>
 <button class="btn addCartBtn">
