@@ -1034,7 +1034,9 @@ window.deleteProduct = async function(productKey) {
 <p>${p.description}</p>
 
 <button class="btn addCartBtn">🛒 Add to Cart</button>
-
+<button class="btn wishlistBtn">
+❤️ Add Wishlist
+</button>
 <button class="btn" onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})">
 💳 Buy Now
 </button>
@@ -1140,6 +1142,27 @@ onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})
 
 });
     let cart = [];
+    let wishlist = [];
+
+document.addEventListener("click", (e) => {
+
+  if (e.target.classList.contains("wishlistBtn")) {
+
+    const card = e.target.closest(".card");
+
+    const name = card.querySelector("h3").innerText;
+    const price = card.querySelector("p").innerText;
+
+    wishlist.push({
+      name: name,
+      price: price
+    });
+
+    alert("❤️ Product Added to Wishlist");
+
+  }
+
+});
 const cartBox = document.getElementById("cartItems");
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains("addCartBtn")) {
