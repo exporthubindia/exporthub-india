@@ -1160,7 +1160,7 @@ const wishlistBox = document.getElementById("wishlistItems");
 document.addEventListener("click", (e) => {
 
   if (e.target.classList.contains("wishlistBtn")) {
-
+e.stopPropagation();
     const card = e.target.closest(".card");
 
     const name = card.querySelector("h3").innerText;
@@ -1186,7 +1186,7 @@ document.addEventListener("click", (e) => {
 const cartBox = document.getElementById("cartItems");
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains("addCartBtn")) {
-
+e.stopPropagation();
     const card = e.target.closest(".card");
     const name = card.querySelector("h3").innerText;
     const price = card.querySelector("p").innerText;
