@@ -1328,27 +1328,37 @@ if (
   }
 
 });
-    // Load Cart
-cart.forEach(item => {
-  cartBox.innerHTML += `
-  <div class="card">
-    <h3>${item.name}</h3>
-    <p>${item.price}</p>
-  </div>`;
-});
+    // Restore Cart
+cartBox.innerHTML = "";
+
+if (cart.length === 0) {
+  cartBox.innerHTML = "No products added yet.";
+} else {
+  cart.forEach(item => {
+    cartBox.innerHTML += `
+      <div class="card">
+        <h3>${item.name}</h3>
+        <p>${item.price}</p>
+      </div>`;
+  });
+}
 
 document.getElementById("cartCount").innerText = cart.length;
 
-// Load Wishlist
+// Restore Wishlist
 wishlistBox.innerHTML = "";
 
-wishlist.forEach(item => {
-  wishlistBox.innerHTML += `
-  <div class="card">
-    <h3>${item.name}</h3>
-    <p>${item.price}</p>
-  </div>`;
-});
+if (wishlist.length === 0) {
+  wishlistBox.innerHTML = "No wishlist items.";
+} else {
+  wishlist.forEach(item => {
+    wishlistBox.innerHTML += `
+      <div class="card">
+        <h3>${item.name}</h3>
+        <p>${item.price}</p>
+      </div>`;
+  });
+}
   </script>
 </body>
 </html>
