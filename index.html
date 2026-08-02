@@ -968,6 +968,7 @@ document.getElementById("resetBtn").style.display = "inline-block";
 
 });
     const productsRef = ref(db, "products");
+    const ratingsRef = ref(db, "ratings");
     window.editProduct = async function(productKey) {
 
   const newName = prompt("New Product Name");
