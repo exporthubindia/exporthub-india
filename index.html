@@ -1250,8 +1250,22 @@ if(navigator.share){
 }
 
 }
+document.addEventListener("click", async (e) => {
 
+  if (!e.target.classList.contains("ratingBtn")) return;
 
+  const card = e.target.closest(".productCard");
+  const productName = card.querySelector("h3").innerText;
+
+  const rating = prompt("⭐ Rate this product (1 to 5)");
+
+  if (!rating || rating < 1 || rating > 5) {
+    alert("Please enter a rating between 1 and 5.");
+    return;
+  }
+
+  alert("⭐ Thank you! You rated " + productName + " " + rating + "/5");
+});
 document.addEventListener("click", (e)=>{
 
 if(e.target.classList.contains("shareBtn")){
