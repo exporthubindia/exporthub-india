@@ -1259,10 +1259,16 @@ if(navigator.share){
 }
 document.addEventListener("click", async (e) => {
 
+  document.addEventListener("click", async (e) => {
+
   if (!e.target.classList.contains("ratingBtn")) return;
 
-  const card = e.target.closest(".productCard");
-  const productName = card.querySelector("h3").innerText;
+  if (!auth.currentUser) {
+    alert("⚠️ Please Login First");
+    return;
+  }
+
+  const productKey = e.target.dataset.key;
 
   const rating = prompt("⭐ Rate this product (1 to 5)");
 
@@ -1271,7 +1277,12 @@ document.addEventListener("click", async (e) => {
     return;
   }
 
-  alert("⭐ Thank you! You rated " + productName + " " + rating + "/5");
+  await push(ref(db, "ratings/" + productKey), {
+    user: auth.currentUser.email,
+    rating: Number(rating)
+  });
+
+  alert("⭐ Rating Saved Successfully!");
 });
 document.addEventListener("click", (e)=>{
 
