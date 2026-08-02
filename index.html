@@ -1151,12 +1151,10 @@ onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})
 
 });
     
-    let cart = [];
-let wishlist = [];
-
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 const wishlistBox = document.getElementById("wishlistItems");
     
-
 document.addEventListener("click", (e) => {
 
   if (e.target.classList.contains("wishlistBtn")) {
@@ -1167,7 +1165,7 @@ e.stopPropagation();
     const price = card.querySelector("p").innerText;
 
     wishlist.push({ name, price });
-
+localStorage.setItem("wishlist", JSON.stringify(wishlist));
     wishlistBox.innerHTML = "";
 
     wishlist.forEach(item => {
@@ -1192,7 +1190,7 @@ e.stopPropagation();
     const price = card.querySelector("p").innerText;
 
     cart.push({name, price});
-
+localStorage.setItem("cart", JSON.stringify(cart));
     document.getElementById("cartCount").innerText = cart.length;
 
     cartBox.innerHTML = "";
@@ -1329,6 +1327,27 @@ if (
     ordersBox.innerHTML = "No Orders Yet.";
   }
 
+});
+    // Load Cart
+cart.forEach(item => {
+  cartBox.innerHTML += `
+  <div class="card">
+    <h3>${item.name}</h3>
+    <p>${item.price}</p>
+  </div>`;
+});
+
+document.getElementById("cartCount").innerText = cart.length;
+
+// Load Wishlist
+wishlistBox.innerHTML = "";
+
+wishlist.forEach(item => {
+  wishlistBox.innerHTML += `
+  <div class="card">
+    <h3>${item.name}</h3>
+    <p>${item.price}</p>
+  </div>`;
 });
   </script>
 </body>
