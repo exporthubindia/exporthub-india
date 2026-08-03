@@ -1407,7 +1407,7 @@ card.querySelectorAll("p")[3].innerText;
 
 });
     onValue(ordersRef, (snapshot) => {
-
+document.getElementById("totalOrders").innerText = snapshot.numChildren();
   const ordersBox = document.getElementById("ordersList");
   ordersBox.innerHTML = "";
 
@@ -1459,7 +1459,8 @@ if (cart.length === 0) {
 }
 
 document.getElementById("cartCount").innerText = cart.length;
-
+document.getElementById("totalCart").innerText = cart.length;
+document.getElementById("totalWishlist").innerText = wishlist.length;
 // Restore Wishlist
 wishlistBox.innerHTML = "";
 
