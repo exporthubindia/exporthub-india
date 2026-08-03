@@ -1166,6 +1166,7 @@ onValue(productsRef, (snapshot) => {
   box.innerHTML = "";
 const adminBox = document.getElementById("adminProducts");
 adminBox.innerHTML = "";
+  document.getElementById("totalProducts").innerText = snapshot.size;
   snapshot.forEach((child) => {
 
     const p = child.val();
