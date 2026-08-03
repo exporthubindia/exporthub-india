@@ -1377,9 +1377,11 @@ if (
   document.getElementById("detailCategory").innerText =
     card.querySelectorAll("p")[1].innerText;
 
-  document.getElementById("detailDescription").innerText =
-    card.querySelectorAll("p")[2].innerText;
-
+  
+document.getElementById("detailDescription").innerHTML =
+card.querySelectorAll("p")[2].innerText +
+"<br><br>" +
+card.querySelectorAll("p")[3].innerText;
   document.getElementById("product-details").style.display = "block";
 
   document.getElementById("product-details")
