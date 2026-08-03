@@ -673,6 +673,29 @@ onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})
 </div>
 
   </section>
+  <section id="seller-profile">
+
+<h2>🏪 Seller Profile</h2>
+
+<div class="card">
+
+<input type="text" id="sellerName" placeholder="Seller Name">
+
+<input type="text" id="sellerCompany" placeholder="Company Name">
+
+<input type="text" id="sellerPhone" placeholder="Mobile Number">
+
+<input type="email" id="sellerEmail" placeholder="Email">
+
+<textarea id="sellerAddress" placeholder="Business Address"></textarea>
+
+<button class="btn" id="saveSellerBtn">
+💾 Save Seller Profile
+</button>
+
+</div>
+
+  </section>
   <section id="uploaded-products">
 <h2>📦 Uploaded Products</h2>
 
@@ -1010,6 +1033,31 @@ window.deleteProduct = async function(productKey) {
 
 };
     const ordersRef = ref(db, "orders");
+    const sellerRef = ref(db, "sellerProfile");
+
+document.getElementById("saveSellerBtn").addEventListener("click", async () => {
+
+  if (!auth.currentUser) {
+    alert("⚠️ Please Login First");
+    return;
+  }
+
+  try {
+    await set(ref(db, "sellerProfile/" + auth.currentUser.uid), {
+      name: document.getElementById("sellerName").value,
+      company: document.getElementById("sellerCompany").value,
+      phone: document.getElementById("sellerPhone").value,
+      email: document.getElementById("sellerEmail").value,
+      address: document.getElementById("sellerAddress").value
+    });
+
+    alert("✅ Seller Profile Saved Successfully!");
+
+  } catch (error) {
+    alert(error.message);
+  }
+
+});
     const searchBox = document.getElementById("searchBox");
     searchBox.addEventListener("input", () => {
   get(productsRef).then((snapshot) => {
