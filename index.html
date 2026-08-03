@@ -940,12 +940,15 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
     }
 
     const product = {
-      name: document.getElementById("productName").value,
-      price: document.getElementById("productPrice").value,
-      category: document.getElementById("productCategory").value,
-      description: document.getElementById("productDescription").value,
-      image: imageURL
-    };
+  name: document.getElementById("productName").value,
+  price: document.getElementById("productPrice").value,
+  category: document.getElementById("productCategory").value,
+  description: document.getElementById("productDescription").value,
+  image: imageURL,
+  sellerName: document.getElementById("sellerName").value,
+  sellerCompany: document.getElementById("sellerCompany").value,
+  sellerPhone: document.getElementById("sellerPhone").value
+};
 
     await push(ref(db, "products"), product);
 
@@ -1089,6 +1092,7 @@ style="width:100%;height:180px;object-fit:cover;border-radius:8px;">
 <p>📂 ${p.category}</p>
 
 <p>${p.description}</p>
+<p>🏪 Seller: ${p.sellerName || "Not Available"}</p>
 <div class="rating">
 ⭐ ⭐ ⭐ ⭐ ⭐
 </div>
@@ -1181,6 +1185,7 @@ style="width:100%;height:180px;object-fit:cover;border-radius:8px;">
 <p>📂 ${p.category}</p>
 
 <p>${p.description}</p>
+<p>🏪 Seller: ${p.sellerName || "Not Available"}</p>
 <div class="rating">
 ⭐ ⭐ ⭐ ⭐ ⭐
 </div>
