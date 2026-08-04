@@ -1278,7 +1278,20 @@ localStorage.setItem("wishlist", JSON.stringify(wishlist));
     localStorage.setItem("wishlist", JSON.stringify(wishlist));
 
     alert("❌ Product Removed from Wishlist");
-    location.reload();
+    wishlistBox.innerHTML = "";
+
+wishlist.forEach((item, index) => {
+  wishlistBox.innerHTML += `
+    <div class="card">
+      <h3>${item.name}</h3>
+      <p>${item.price}</p>
+      <button class="btn removeWishlistBtn" data-index="${index}">
+        ❌ Remove
+      </button>
+    </div>`;
+});
+
+alert("❌ Product Removed from Wishlist");
   }
 });
 const cartBox = document.getElementById("cartItems");
