@@ -1254,18 +1254,32 @@ if (exists) {
 localStorage.setItem("wishlist", JSON.stringify(wishlist));
     wishlistBox.innerHTML = "";
 
-    wishlist.forEach(item => {
-      wishlistBox.innerHTML += `
+    wishlist.forEach((item, index) => {
+  wishlistBox.innerHTML += `
       <div class="card">
         <h3>${item.name}</h3>
         <p>${item.price}</p>
+        <button class="btn removeWishlistBtn" data-index="${index}">
+          ❌ Remove
+        </button>
       </div>`;
-    });
+});
 
     alert("❤️ Product Added to Wishlist");
 
   }
 
+});
+    document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("removeWishlistBtn")) {
+    const index = e.target.dataset.index;
+
+    wishlist.splice(index, 1);
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+
+    alert("❌ Product Removed from Wishlist");
+    location.reload();
+  }
 });
 const cartBox = document.getElementById("cartItems");
 document.addEventListener("click", (e) => {
