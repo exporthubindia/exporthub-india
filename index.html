@@ -1080,7 +1080,7 @@ document.getElementById("saveSellerBtn").addEventListener("click", async () => {
     box.innerHTML = "";
 
     snapshot.forEach((child) => {
-
+const key = child.key;
       const p = child.val();
 
       if (
