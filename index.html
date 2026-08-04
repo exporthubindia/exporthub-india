@@ -1460,6 +1460,7 @@ document.getElementById("totalOrders").innerText = snapshot.numChildren();
         <p>📱 ${order.mobile}</p>
         <p>📍 ${order.address}</p>
         <p>🕒 ${order.date}</p>
+        <p>📦 Status: ${order.status || "Pending"}</p>
       </div>
       `;
     }
