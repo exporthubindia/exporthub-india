@@ -1244,7 +1244,12 @@ e.stopPropagation();
 
     const name = card.querySelector("h3").innerText;
     const price = card.querySelector("p").innerText;
+const exists = wishlist.find(item => item.name === name);
 
+if (exists) {
+  alert("❤️ Product pehle se Wishlist me hai");
+  return;
+}
     wishlist.push({ name, price });
 localStorage.setItem("wishlist", JSON.stringify(wishlist));
     wishlistBox.innerHTML = "";
