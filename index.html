@@ -1105,7 +1105,7 @@ style="width:100%;height:180px;object-fit:cover;border-radius:8px;">
 <p>${p.description}</p>
 <p>🏪 Seller: ${p.sellerName || "Not Available"}</p>
 <div class="rating">
-⭐ ⭐ ⭐ ⭐ ⭐
+⭐ ${p.rating || "No Ratings Yet"}
 </div>
 
 <button class="btn ratingBtn" data-key="${key}">
@@ -1199,7 +1199,7 @@ style="width:100%;height:180px;object-fit:cover;border-radius:8px;">
 <p>${p.description}</p>
 <p>🏪 Seller: ${p.sellerName || "Not Available"}</p>
 <div class="rating">
-⭐ ⭐ ⭐ ⭐ ⭐
+⭐ ${p.rating || "No Ratings Yet"}
 </div>
 
 <button class="btn ratingBtn" data-key="${child.key}">
