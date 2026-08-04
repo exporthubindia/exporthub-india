@@ -948,13 +948,7 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
 
   try {
 
-    if (file) {
-      const imageRef = storageRef(storage, "products/" + Date.now() + "_" + file.name);
-
-      await uploadBytes(imageRef, file);
-
-      imageURL = await getDownloadURL(imageRef);
-    }
+    imageURL = "";
 
     const product = {
   name: document.getElementById("productName").value,
