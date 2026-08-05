@@ -767,6 +767,10 @@ No Orders Yet.
 
 <p><strong>Total Products:</strong> <span id="totalProducts">0</span></p>
 <p><strong>My Products:</strong> <span id="myProducts">0</span></p>
+  <h3>📦 My Uploaded Products</h3>
+<div id="myProductsList" class="card">
+No Products Uploaded Yet.
+</div>
 <p><strong>Total Orders:</strong> <span id="totalOrders">0</span></p>
 
 <p><strong>Total Wishlist:</strong> <span id="totalWishlist">0</span></p>
@@ -1162,16 +1166,27 @@ const adminBox = document.getElementById("adminProducts");
 adminBox.innerHTML = "";
   document.getElementById("totalProducts").innerText = snapshot.size;
   let myProducts = 0;
+  const myProductsList = document.getElementById("myProductsList");
+myProductsList.innerHTML = "";
   snapshot.forEach((child) => {
 
     const p = child.val();
     const key = child.key;
-if (
+    
+    if (
   auth.currentUser &&
   p.sellerName === document.getElementById("sellerName").value
 ) {
   myProducts++;
-}
+
+  myProductsList.innerHTML += `
+    <div class="card">
+      <h3>${p.name}</h3>
+      <p>💰 ${p.price}</p>
+      <p>📂 ${p.category}</p>
+    </div>
+  `;
+    }
 adminBox.innerHTML += `
 <div class="card">
   <h3>${p.name}</h3>
