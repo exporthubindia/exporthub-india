@@ -1526,13 +1526,11 @@ if (auth.currentUser) {
   if (!found) {
     ordersBox.innerHTML = "No Orders Yet.";
   }
-  });
-
-  if (!found) {
-    ordersBox.innerHTML = "No Orders Yet.";
+    
+  if (!sellerFound) {
+    sellerOrdersBox.innerHTML = "No Orders Yet.";
   }
 
-});
 });
     // Restore Cart
 cartBox.innerHTML = "";
