@@ -1180,12 +1180,20 @@ myProductsList.innerHTML = "";
   myProducts++;
 
   myProductsList.innerHTML += `
-    <div class="card">
-      <h3>${p.name}</h3>
-      <p>💰 ${p.price}</p>
-      <p>📂 ${p.category}</p>
-    </div>
-  `;
+  <div class="card">
+    <h3>${p.name}</h3>
+    <p>💰 ${p.price}</p>
+    <p>📂 ${p.category}</p>
+
+    <button class="btn" onclick="editProduct('${key}')">
+      ✏️ Edit
+    </button>
+
+    <button class="btn" onclick="deleteProduct('${key}')">
+      🗑️ Delete
+    </button>
+  </div>
+`;
     }
 adminBox.innerHTML += `
 <div class="card">
