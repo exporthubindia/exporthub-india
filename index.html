@@ -1060,6 +1060,7 @@ window.deleteProduct = async function(productKey) {
 
 };
     const ordersRef = ref(db, "orders");
+    const sellerOrdersBox = document.getElementById("sellerOrdersList");
     const sellerRef = ref(db, "sellerProfile");
 
 document.getElementById("saveSellerBtn").addEventListener("click", async () => {
