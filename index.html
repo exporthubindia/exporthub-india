@@ -1224,6 +1224,7 @@ onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})
 <button class="btn shareBtn">
 📤 Share Product
 </button>
+${auth.currentUser && p.sellerName === document.getElementById("sellerName").value ? `
 <button class="btn" onclick="editProduct('${child.key}')">
 ✏️ Edit
 </button>
@@ -1231,6 +1232,7 @@ onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})
 <button class="btn" onclick="deleteProduct('${child.key}')">
 🗑️ Delete
 </button>
+` : ""}
       </div>
     `;
 
