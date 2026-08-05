@@ -1484,7 +1484,8 @@ document.getElementById("totalOrders").innerText = snapshot.numChildren();
     ordersBox.innerHTML = "⚠️ Please Login First";
     return;
   }
-
+sellerOrdersBox.innerHTML = "";
+let sellerFound = false;
   let found = false;
 
   snapshot.forEach((child) => {
