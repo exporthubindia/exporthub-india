@@ -766,7 +766,7 @@ No Orders Yet.
 <div class="card">
 
 <p><strong>Total Products:</strong> <span id="totalProducts">0</span></p>
-
+<p><strong>My Products:</strong> <span id="myProducts">0</span></p>
 <p><strong>Total Orders:</strong> <span id="totalOrders">0</span></p>
 
 <p><strong>Total Wishlist:</strong> <span id="totalWishlist">0</span></p>
@@ -1161,11 +1161,17 @@ onValue(productsRef, (snapshot) => {
 const adminBox = document.getElementById("adminProducts");
 adminBox.innerHTML = "";
   document.getElementById("totalProducts").innerText = snapshot.size;
+  let myProducts = 0;
   snapshot.forEach((child) => {
 
     const p = child.val();
     const key = child.key;
-
+if (
+  auth.currentUser &&
+  p.sellerName === document.getElementById("sellerName").value
+) {
+  myProducts++;
+}
 adminBox.innerHTML += `
 <div class="card">
   <h3>${p.name}</h3>
@@ -1229,7 +1235,7 @@ onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})
     `;
 
   });
-
+document.getElementById("myProducts").innerText = myProducts;
 });
     
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
