@@ -1491,7 +1491,21 @@ let sellerFound = false;
   snapshot.forEach((child) => {
 
     const order = child.val();
+if (auth.currentUser) {
 
+  sellerFound = true;
+
+  sellerOrdersBox.innerHTML += `
+  <div class="card">
+    <h3>👤 ${order.name}</h3>
+    <p>📱 ${order.mobile}</p>
+    <p>📍 ${order.address}</p>
+    <p>🕒 ${order.date}</p>
+    <p>📦 Status: ${order.status || "Pending"}</p>
+  </div>
+  `;
+
+}
     if (order.user === auth.currentUser.email) {
 
       found = true;
@@ -1512,7 +1526,13 @@ let sellerFound = false;
   if (!found) {
     ordersBox.innerHTML = "No Orders Yet.";
   }
+  });
 
+  if (!found) {
+    ordersBox.innerHTML = "No Orders Yet.";
+  }
+
+});
 });
     // Restore Cart
 cartBox.innerHTML = "";
