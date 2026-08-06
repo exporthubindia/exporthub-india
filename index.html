@@ -1151,7 +1151,9 @@ document.getElementById("placeOrderBtn").addEventListener("click", () => {
     name: document.getElementById("checkoutName").value,
     mobile: document.getElementById("checkoutMobile").value,
     address: document.getElementById("checkoutAddress").value,
-    date: new Date().toLocaleString()
+    date: new Date().toLocaleString(),
+    seller: document.getElementById("sellerName").value,
+status: "Pending"
   };
 
   push(ref(db, "orders"), order)
