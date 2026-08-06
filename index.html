@@ -1493,8 +1493,10 @@ let sellerFound = false;
   snapshot.forEach((child) => {
 
     const order = child.val();
-if (auth.currentUser) {
-
+if (
+  auth.currentUser &&
+  order.seller === document.getElementById("sellerName").value
+) {
   sellerFound = true;
 
   sellerOrdersBox.innerHTML += `
