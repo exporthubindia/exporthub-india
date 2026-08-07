@@ -1155,7 +1155,7 @@ alert("Place Order Button Clicked");
     seller: document.getElementById("sellerName").value,
 status: "Pending"
   };
-
+alert(JSON.stringify(order));
   push(ref(db, "orders"), order)
     .then(() => {
       alert("✅ Order Placed Successfully!");
