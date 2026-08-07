@@ -1479,7 +1479,10 @@ if (
   e.target.classList.contains("wishlistBtn") ||
   e.target.classList.contains("addCartBtn") ||
   e.target.classList.contains("shareBtn") ||
-  e.target.classList.contains("ratingBtn")
+  e.target.classList.contains("ratingBtn") ||
+  e.target.classList.contains("buyNowBtn") ||
+  e.target.innerText.includes("Edit") ||
+  e.target.innerText.includes("Delete")
 ) {
   return;
 }
