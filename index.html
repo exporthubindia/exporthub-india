@@ -1160,14 +1160,6 @@ return;
     return;
   }
 
-  const name = document.getElementById("checkoutName").value.trim();
-const mobile = document.getElementById("checkoutMobile").value.trim();
-const address = document.getElementById("checkoutAddress").value.trim();
-
-if (!name || !mobile || !address) {
-  alert("⚠️ Name, Mobile aur Address bhariye.");
-  return;
-}
 
 const order = {
   user: auth.currentUser.email,
