@@ -1167,7 +1167,7 @@ const order = {
   mobile: mobile,
   address: address,
   date: new Date().toLocaleString(),
-  seller: document.getElementById("sellerName").value,
+  seller: selectedProduct ? selectedProduct.seller : "",
   productName: selectedProduct ? selectedProduct.name : "",
 productPrice: selectedProduct ? selectedProduct.price : "",
   status: "Pending"
@@ -1537,10 +1537,19 @@ if (
   sellerOrdersBox.innerHTML += `
   <div class="card">
     <h3>👤 ${order.name}</h3>
+    <p>🛍️ Product: ${order.productName || "Not Selected"}</p>
+<p>💰 Price: ${order.productPrice || "Not Available"}</p>
     <p>📱 ${order.mobile}</p>
     <p>📍 ${order.address}</p>
     <p>🕒 ${order.date}</p>
     <p>📦 Status: ${order.status || "Pending"}</p>
+<button class="btn acceptOrderBtn" data-key="${child.key}">
+✅ Accept
+</button>
+
+<button class="btn rejectOrderBtn" data-key="${child.key}">
+❌ Reject
+</button>
   </div>
   `;
 
@@ -1552,6 +1561,8 @@ if (
       ordersBox.innerHTML += `
       <div class="card">
         <h3>📦 ${order.name}</h3>
+        <p>🛍️ Product: ${order.productName || "Not Selected"}</p>
+<p>💰 Price: ${order.productPrice || "Not Available"}</p>
         <p>📱 ${order.mobile}</p>
         <p>📍 ${order.address}</p>
         <p>🕒 ${order.date}</p>
@@ -1606,6 +1617,27 @@ if (wishlist.length === 0) {
     </div>`;
 });
 }
+    document.addEventListener("click", async (e) => {
+
+  if (e.target.classList.contains("acceptOrderBtn")) {
+
+    await update(ref(db, "orders/" + e.target.dataset.key), {
+      status: "Accepted"
+    });
+
+    alert("✅ Order Accepted");
+  }
+
+  if (e.target.classList.contains("rejectOrderBtn")) {
+
+    await update(ref(db, "orders/" + e.target.dataset.key), {
+      status: "Rejected"
+    });
+
+    alert("❌ Order Rejected");
+  }
+
+});
   </script>
 </body>
 </html>
