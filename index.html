@@ -17,8 +17,8 @@
 
 <nav>
 <a href="#home">🏠 Home</a>
-<a href="#products">🛒 Buy Products</a>
-<a href="#sell-product">🏭 Sell Products</a>
+<a href="#products" id="buyerMenu">🛒 Buy Products</a>
+<a href="#sell-product" id="sellerMenu">🏭 Sell Products</a>
 <a href="#countries">🌍 Markets</a>
 <a href="#about">About</a>
 <a href="#contact">📩 Contact</a>
@@ -489,9 +489,9 @@ style="width:100%;padding:12px;margin:8px 0;">
 <input id="regPassword" type="password" placeholder="Create Password"
 style="width:100%;padding:12px;margin:8px 0;">
 
-<select style="width:100%;padding:12px;margin:8px 0;">
-<option>Buyer</option>
-<option>Seller</option>
+<select id="userType" style="width:100%;padding:12px;margin:8px 0;">
+<option value="Buyer">Buyer</option>
+<option value="Seller">Seller</option>
 </select>
 
 <button type="button" id="registerBtn" class="btn">Create Account</button>
