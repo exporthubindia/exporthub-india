@@ -340,6 +340,8 @@ style="width:100%;padding:12px;margin:8px 0;">
 
 <input id="buyerEmail" type="email" placeholder="Your Email"
 style="width:100%;padding:12px;margin:8px 0;">
+  <input id="buyerMobile" type="tel" placeholder="WhatsApp / Mobile Number"
+style="width:100%;padding:12px;margin:8px 0;">
 
 <input id="buyerProduct" type="text" placeholder="Product Required"
 style="width:100%;padding:12px;margin:8px 0;">
@@ -1144,6 +1146,19 @@ onValue(buyerEnquiriesRef, (snapshot) => {
         <p><strong>📦 Quantity:</strong> ${enquiry.quantity || ""}</p>
         <p><strong>📝 Requirement:</strong> ${enquiry.message || ""}</p>
         <p><strong>🕒 Date:</strong> ${enquiry.date || ""}</p>
+        <p>
+  <a
+    href="https://wa.me/?text=${encodeURIComponent(
+      "Hello " + (enquiry.name || "Buyer") +
+      ", I am from ExportHub India. Regarding your requirement for " +
+      (enquiry.product || "") +
+      " (" + (enquiry.quantity || "") + ")."
+    )}"
+    target="_blank"
+    class="btn">
+    📲 Contact Buyer on WhatsApp
+  </a>
+</p>
       </div>
     `;
 
