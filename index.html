@@ -827,7 +827,11 @@ No Orders Yet.
 <h3>📦 All Products</h3>
 
 <div id="adminProducts"></div>
+<h3>📩 Buyer Enquiries</h3>
 
+<div id="buyerEnquiriesList" class="card">
+  No Buyer Enquiries Yet.
+</div>
 </div>
 
   </section>
@@ -1113,6 +1117,39 @@ document.getElementById("resetBtn").style.display = "inline-block";
 });
     const productsRef = ref(db, "products");
     const ratingsRef = ref(db, "ratings");
+    const buyerEnquiriesRef = ref(db, "buyerEnquiries");
+
+onValue(buyerEnquiriesRef, (snapshot) => {
+
+  const box = document.getElementById("buyerEnquiriesList");
+
+  if (!box) return;
+
+  box.innerHTML = "";
+
+  if (!snapshot.exists()) {
+    box.innerHTML = "No Buyer Enquiries Yet.";
+    return;
+  }
+
+  snapshot.forEach((childSnapshot) => {
+
+    const enquiry = childSnapshot.val();
+
+    box.innerHTML += `
+      <div class="card">
+        <h3>📩 ${enquiry.product || "Product"}</h3>
+        <p><strong>👤 Buyer:</strong> ${enquiry.name || ""}</p>
+        <p><strong>📧 Email:</strong> ${enquiry.email || ""}</p>
+        <p><strong>📦 Quantity:</strong> ${enquiry.quantity || ""}</p>
+        <p><strong>📝 Requirement:</strong> ${enquiry.message || ""}</p>
+        <p><strong>🕒 Date:</strong> ${enquiry.date || ""}</p>
+      </div>
+    `;
+
+  });
+
+});
     window.editProduct = async function(productKey) {
 
   const newName = prompt("New Product Name");
