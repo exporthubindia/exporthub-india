@@ -902,28 +902,53 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
     setPersistence(auth, browserLocalPersistence);
 const db = getDatabase(app);
-    document.getElementById("sendEnquiryBtn").addEventListener("click", () => {
+    const enquiryBtn = document.getElementById("sendEnquiryBtn");
 
-  const enquiry = {
-    name: document.getElementById("buyerName").value,
-    email: document.getElementById("buyerEmail").value,
-    product: document.getElementById("buyerProduct").value,
-    quantity: document.getElementById("buyerQuantity").value,
-    message: document.getElementById("buyerMessage").value,
-    date: new Date().toLocaleString()
-  };
+if (enquiryBtn) {
 
-  push(ref(db, "buyerEnquiries"), enquiry)
-  .then(() => {
+  enquiryBtn.addEventListener("click", async () => {
 
-    alert("✅ Requirement Sent Successfully!");
+    const name = document.getElementById("buyerName").value.trim();
+    const email = document.getElementById("buyerEmail").value.trim();
+    const product = document.getElementById("buyerProduct").value.trim();
+    const quantity = document.getElementById("buyerQuantity").value.trim();
+    const message = document.getElementById("buyerMessage").value.trim();
 
-  })
-  .catch((error)=>{
-    alert(error.message);
+    if (!name || !email || !product || !quantity) {
+      alert("⚠️ Please fill Name, Email, Product and Quantity.");
+      return;
+    }
+
+    const enquiry = {
+      name: name,
+      email: email,
+      product: product,
+      quantity: quantity,
+      message: message,
+      date: new Date().toLocaleString()
+    };
+
+    try {
+
+      await push(ref(db, "buyerEnquiries"), enquiry);
+
+      alert("✅ Requirement Sent Successfully!");
+
+      document.getElementById("buyerName").value = "";
+      document.getElementById("buyerEmail").value = "";
+      document.getElementById("buyerProduct").value = "";
+      document.getElementById("buyerQuantity").value = "";
+      document.getElementById("buyerMessage").value = "";
+
+    } catch (error) {
+
+      alert("❌ Error: " + error.message);
+
+    }
+
   });
 
-});
+}
 const storage = getStorage(app);
 console.log("Firebase Connected Successfully");
     alert("JavaScript Loaded");
