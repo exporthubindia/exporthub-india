@@ -1141,21 +1141,43 @@ style="width:100%;height:180px;object-fit:cover;border-radius:8px;">
 });
 document.getElementById("placeOrderBtn").addEventListener("click", () => {
 alert("Place Order Button Clicked");
+  const name = document.getElementById("checkoutName").value.trim();
+const mobile = document.getElementById("checkoutMobile").value.trim();
+const address = document.getElementById("checkoutAddress").value.trim();
+
+alert(
+"Name = " + name +
+"\nMobile = " + mobile +
+"\nAddress = " + address
+);
+
+if (!name || !mobile || !address) {
+alert("⚠️ Please fill Name, Mobile and Address");
+return;
+}
   if (!auth.currentUser) {
     alert("⚠️ Please Login First");
     return;
   }
 
-  const order = {
-    user: auth.currentUser.email,
-    name: document.getElementById("checkoutName").value,
-    mobile: document.getElementById("checkoutMobile").value,
-    address: document.getElementById("checkoutAddress").value,
-    date: new Date().toLocaleString(),
-    seller: document.getElementById("sellerName").value,
-status: "Pending"
-  };
-alert(JSON.stringify(order));
+  const name = document.getElementById("checkoutName").value.trim();
+const mobile = document.getElementById("checkoutMobile").value.trim();
+const address = document.getElementById("checkoutAddress").value.trim();
+
+if (!name || !mobile || !address) {
+  alert("⚠️ Name, Mobile aur Address bhariye.");
+  return;
+}
+
+const order = {
+  user: auth.currentUser.email,
+  name: name,
+  mobile: mobile,
+  address: address,
+  date: new Date().toLocaleString(),
+  seller: document.getElementById("sellerName").value,
+  status: "Pending"
+};
   push(ref(db, "orders"), order)
     .then(() => {
       alert("✅ Order Placed Successfully!");
