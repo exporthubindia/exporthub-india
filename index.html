@@ -902,6 +902,28 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
     setPersistence(auth, browserLocalPersistence);
 const db = getDatabase(app);
+    document.getElementById("sendEnquiryBtn").addEventListener("click", () => {
+
+  const enquiry = {
+    name: document.getElementById("buyerName").value,
+    email: document.getElementById("buyerEmail").value,
+    product: document.getElementById("buyerProduct").value,
+    quantity: document.getElementById("buyerQuantity").value,
+    message: document.getElementById("buyerMessage").value,
+    date: new Date().toLocaleString()
+  };
+
+  push(ref(db, "buyerEnquiries"), enquiry)
+  .then(() => {
+
+    alert("✅ Requirement Sent Successfully!");
+
+  })
+  .catch((error)=>{
+    alert(error.message);
+  });
+
+});
 const storage = getStorage(app);
 console.log("Firebase Connected Successfully");
     alert("JavaScript Loaded");
