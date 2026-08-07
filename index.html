@@ -1574,13 +1574,16 @@ wishlistBox.innerHTML = "";
 if (wishlist.length === 0) {
   wishlistBox.innerHTML = "No wishlist items.";
 } else {
-  wishlist.forEach(item => {
-    wishlistBox.innerHTML += `
-      <div class="card">
-        <h3>${item.name}</h3>
-        <p>${item.price}</p>
-      </div>`;
-  });
+  wishlist.forEach((item, index) => {
+  wishlistBox.innerHTML += `
+    <div class="card">
+      <h3>${item.name}</h3>
+      <p>${item.price}</p>
+      <button class="btn removeWishlistBtn" data-index="${index}">
+        ❌ Remove
+      </button>
+    </div>`;
+});
 }
   </script>
 </body>
