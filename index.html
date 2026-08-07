@@ -997,7 +997,25 @@ document.getElementById("uploadBtn").addEventListener("click", async () => {
 
     document.querySelector("#login h2").innerHTML =
       "✅ Welcome<br>" + user.email;
+onValue(ref(db, "users/" + user.uid), (snapshot) => {
 
+  let data = snapshot.val();
+
+  if (data && data.type === "Seller") {
+
+    document.getElementById("sellerMenu").style.display = "inline-block";
+    document.getElementById("sellerProfileMenu").style.display = "inline-block";
+    document.getElementById("sellerOrdersMenu").style.display = "inline-block";
+
+  } else {
+
+    document.getElementById("sellerMenu").style.display = "none";
+    document.getElementById("sellerProfileMenu").style.display = "none";
+    document.getElementById("sellerOrdersMenu").style.display = "none";
+
+  }
+
+});
     document.querySelector("#login input[type=email]").style.display = "none";
 document.querySelector("#login input[type=password]").style.display = "none";
 document.getElementById("loginBtn").style.display = "none";
