@@ -1129,7 +1129,7 @@ style="width:100%;height:180px;object-fit:cover;border-radius:8px;">
 <button class="btn wishlistBtn">
 ❤️ Add Wishlist
 </button>
-<button class="btn" onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})">
+<button class="btn buyNowBtn">
 💳 Buy Now
 </button>
 
@@ -1168,6 +1168,8 @@ const order = {
   address: address,
   date: new Date().toLocaleString(),
   seller: document.getElementById("sellerName").value,
+  productName: selectedProduct ? selectedProduct.name : "",
+productPrice: selectedProduct ? selectedProduct.price : "",
   status: "Pending"
 };
   push(ref(db, "orders"), order)
@@ -1266,8 +1268,7 @@ style="width:100%;height:180px;object-fit:cover;border-radius:8px;">
 <button class="btn wishlistBtn">
 ❤️ Add Wishlist
 </button>
-<button class="btn"
-onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})">
+<button class="btn buyNowBtn">
 💳 Buy Now
 </button>
 <button class="btn shareBtn">
@@ -1288,13 +1289,30 @@ ${auth.currentUser && p.sellerName === document.getElementById("sellerName").val
   });
 document.getElementById("myProducts").innerText = myProducts;
 });
-    
+    let selectedProduct = null;
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 const wishlistBox = document.getElementById("wishlistItems");
     
 document.addEventListener("click", (e) => {
+if (e.target.classList.contains("buyNowBtn")) {
 
+  const card = e.target.closest(".card");
+
+  selectedProduct = {
+    name: card.querySelector("h3").innerText,
+    price: card.querySelectorAll("p")[0].innerText,
+    seller: card.querySelectorAll("p")[3].innerText
+  };
+
+  document.getElementById("checkout").scrollIntoView({
+    behavior: "smooth"
+  });
+
+  alert("✅ Product Selected: " + selectedProduct.name);
+
+  return;
+}
   if (e.target.classList.contains("wishlistBtn")) {
 e.stopPropagation();
     const card = e.target.closest(".card");
