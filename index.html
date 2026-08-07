@@ -916,19 +916,21 @@ if (enquiryBtn) {
 
     const name = document.getElementById("buyerName").value.trim();
     const email = document.getElementById("buyerEmail").value.trim();
+    const mobile = document.getElementById("buyerMobile").value.trim();
     const product = document.getElementById("buyerProduct").value.trim();
     const quantity = document.getElementById("buyerQuantity").value.trim();
     const message = document.getElementById("buyerMessage").value.trim();
 
-    if (!name || !email || !product || !quantity) {
-      alert("⚠️ Please fill Name, Email, Product and Quantity.");
-      return;
+    if (!name || !email || !mobile || !product || !quantity) {
+  alert("⚠️ Please fill Name, Email, Mobile, Product and Quantity.");
+  return;
     }
 
     const enquiry = {
-      name: name,
-      email: email,
-      product: product,
+  name: name,
+  email: email,
+  mobile: mobile,
+  product: product,
       quantity: quantity,
       message: message,
       date: new Date().toLocaleString()
@@ -942,6 +944,7 @@ if (enquiryBtn) {
 
       document.getElementById("buyerName").value = "";
       document.getElementById("buyerEmail").value = "";
+      document.getElementById("buyerMobile").value = "";
       document.getElementById("buyerProduct").value = "";
       document.getElementById("buyerQuantity").value = "";
       document.getElementById("buyerMessage").value = "";
@@ -1143,12 +1146,14 @@ onValue(buyerEnquiriesRef, (snapshot) => {
         <h3>📩 ${enquiry.product || "Product"}</h3>
         <p><strong>👤 Buyer:</strong> ${enquiry.name || ""}</p>
         <p><strong>📧 Email:</strong> ${enquiry.email || ""}</p>
+        <p><strong>📱 WhatsApp:</strong> ${enquiry.mobile || ""}</p>
         <p><strong>📦 Quantity:</strong> ${enquiry.quantity || ""}</p>
         <p><strong>📝 Requirement:</strong> ${enquiry.message || ""}</p>
         <p><strong>🕒 Date:</strong> ${enquiry.date || ""}</p>
         <p>
+  <p>
   <a
-    href="https://wa.me/?text=${encodeURIComponent(
+    href="https://wa.me/91${(enquiry.mobile || "").replace(/\D/g, "")}?text=${encodeURIComponent(
       "Hello " + (enquiry.name || "Buyer") +
       ", I am from ExportHub India. Regarding your requirement for " +
       (enquiry.product || "") +
