@@ -1022,6 +1022,63 @@ if (enquiryBtn) {
 
 }
 const storage = getStorage(app);
+    document.getElementById("joinSupplierBtn").addEventListener("click", async () => {
+
+  const name = document.getElementById("supplierName").value.trim();
+  const company = document.getElementById("supplierCompany").value.trim();
+  const mobile = document.getElementById("supplierMobile").value.trim();
+  const email = document.getElementById("supplierEmail").value.trim();
+  const location = document.getElementById("supplierLocation").value.trim();
+  const product = document.getElementById("supplierProduct").value.trim();
+  const price = document.getElementById("supplierPrice").value.trim();
+  const minQty = document.getElementById("supplierMinQty").value.trim();
+  const supply = document.getElementById("supplierSupply").value;
+  const description = document.getElementById("supplierDescription").value.trim();
+
+  if (!name || !mobile || !product || !location) {
+    alert("⚠️ Name, Mobile, Product aur Location bharna zaroori hai.");
+    return;
+  }
+
+  const supplier = {
+    name: name,
+    company: company,
+    mobile: mobile,
+    email: email,
+    location: location,
+    product: product,
+    price: price,
+    minQty: minQty,
+    supply: supply,
+    description: description,
+    date: new Date().toLocaleString(),
+    status: "New"
+  };
+
+  try {
+
+    await push(ref(db, "suppliers"), supplier);
+
+    alert("✅ Supplier Registration Successfully Sent!");
+
+    document.getElementById("supplierName").value = "";
+    document.getElementById("supplierCompany").value = "";
+    document.getElementById("supplierMobile").value = "";
+    document.getElementById("supplierEmail").value = "";
+    document.getElementById("supplierLocation").value = "";
+    document.getElementById("supplierProduct").value = "";
+    document.getElementById("supplierPrice").value = "";
+    document.getElementById("supplierMinQty").value = "";
+    document.getElementById("supplierSupply").value = "";
+    document.getElementById("supplierDescription").value = "";
+
+  } catch (error) {
+
+    alert("❌ Error: " + error.message);
+
+  }
+
+});
 console.log("Firebase Connected Successfully");
     alert("JavaScript Loaded");
     document.getElementById("logoutBtn").addEventListener("click", () => {
