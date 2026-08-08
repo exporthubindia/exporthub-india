@@ -1482,22 +1482,6 @@ if (e.target.classList.contains("buyNowBtn")) {
   return;
 }
 
-  const card = e.target.closest(".card");
-
-  selectedProduct = {
-  name: card.querySelector("h3")?.innerText || "",
-  price: card.querySelector("p")?.innerText || "",
-  seller: ""
-};
-
-  document.getElementById("checkout").scrollIntoView({
-    behavior: "smooth"
-  });
-
-  alert("✅ Product Selected: " + selectedProduct.name);
-
-  return;
-}
   if (e.target.classList.contains("wishlistBtn")) {
 e.stopPropagation();
     const card = e.target.closest(".card");
