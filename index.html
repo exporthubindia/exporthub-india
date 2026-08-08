@@ -1318,7 +1318,7 @@ const order = {
   mobile: mobile,
   address: address,
   date: new Date().toLocaleString(),
-  seller: selectedProduct ? selectedProduct.seller : "",
+  seller: selectedProduct?.seller || document.getElementById("sellerName").value.trim(),
   productName: selectedProduct ? selectedProduct.name : "",
 productPrice: selectedProduct ? selectedProduct.price : "",
   status: "Pending"
@@ -1451,10 +1451,10 @@ if (e.target.classList.contains("buyNowBtn")) {
   const card = e.target.closest(".card");
 
   selectedProduct = {
-    name: card.querySelector("h3").innerText,
-    price: card.querySelectorAll("p")[0].innerText,
-    seller: card.querySelectorAll("p")[3].innerText
-  };
+  name: card.querySelector("h3")?.innerText || "",
+  price: card.querySelector("p")?.innerText || "",
+  seller: ""
+};
 
   document.getElementById("checkout").scrollIntoView({
     behavior: "smooth"
