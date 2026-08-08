@@ -1318,9 +1318,9 @@ const order = {
   mobile: mobile,
   address: address,
   date: new Date().toLocaleString(),
-  seller: selectedProduct?.seller || document.getElementById("sellerName").value.trim(),
-  productName: selectedProduct ? selectedProduct.name : "",
-productPrice: selectedProduct ? selectedProduct.price : "",
+  seller: selectedProduct?.seller || "ExportHub India Seller",
+productName: selectedProduct?.name || "Selected Product",
+productPrice: selectedProduct?.price || "Price Not Available",
   status: "Pending"
 };
   push(ref(db, "orders"), order)
@@ -1447,6 +1447,40 @@ const wishlistBox = document.getElementById("wishlistItems");
     
 document.addEventListener("click", (e) => {
 if (e.target.classList.contains("buyNowBtn")) {
+
+  const card = e.target.closest(".card");
+
+  const productName =
+    card.querySelector("h3")?.innerText?.trim() || "Selected Product";
+
+  const productPrice =
+    card.querySelector("p")?.innerText?.trim() || "Price Not Available";
+
+  let sellerName =
+    document.getElementById("sellerName")?.value?.trim() || "";
+
+  if (!sellerName && auth.currentUser) {
+    sellerName = auth.currentUser.email;
+  }
+
+  if (!sellerName) {
+    sellerName = "ExportHub India Seller";
+  }
+
+  selectedProduct = {
+    name: productName,
+    price: productPrice,
+    seller: sellerName
+  };
+
+  document.getElementById("checkout").scrollIntoView({
+    behavior: "smooth"
+  });
+
+  alert("✅ Product Selected: " + productName);
+
+  return;
+}
 
   const card = e.target.closest(".card");
 
