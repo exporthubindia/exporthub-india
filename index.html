@@ -1318,9 +1318,9 @@ const order = {
   mobile: mobile,
   address: address,
   date: new Date().toLocaleString(),
-  seller: selectedProduct?.seller || "ExportHub India Seller",
-productName: selectedProduct?.name || "Selected Product",
-productPrice: selectedProduct?.price || "Price Not Available",
+  seller: selectedProduct?.seller || document.getElementById("sellerName").value.trim(),
+productName: selectedProduct ? selectedProduct.name : "",
+productPrice: selectedProduct ? selectedProduct.price : "",
   status: "Pending"
 };
   push(ref(db, "orders"), order)
