@@ -929,7 +929,9 @@ onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})
 <p>© 2026 ExportHub India | Global Trade Network</p>
 </footer>
   <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -940,6 +942,7 @@ import {
   browserLocalPersistence,
   signOut
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
 import {
   getDatabase,
   ref,
@@ -950,12 +953,12 @@ import {
   remove,
   update
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-import {
-  getStorage,
-  ref as storageRef,
-  uploadBytes,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
+
+
+// ================================
+// FIREBASE CONFIG
+// ================================
+
 const firebaseConfig = {
   apiKey: "AIzaSyDK8hxBdK7SNUY6qHqvtKsg9FB4IotvWYA",
   authDomain: "exporthub-india-87d31.firebaseapp.com",
@@ -966,968 +969,360 @@ const firebaseConfig = {
   appId: "1:60863572079:web:9c4146979ab138fb72c59a"
 };
 
+
+// ================================
+// INITIALIZE FIREBASE
+// ================================
+
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
-    setPersistence(auth, browserLocalPersistence);
+
+await setPersistence(auth, browserLocalPersistence);
+
 const db = getDatabase(app);
-    const enquiryBtn = document.getElementById("sendEnquiryBtn");
 
-if (enquiryBtn) {
+console.log("✅ Firebase Connected Successfully");
 
-  enquiryBtn.addEventListener("click", async () => {
 
-    const name = document.getElementById("buyerName").value.trim();
-    const email = document.getElementById("buyerEmail").value.trim();
-    const mobile = document.getElementById("buyerMobile").value.trim();
-    const product = document.getElementById("buyerProduct").value.trim();
-    const quantity = document.getElementById("buyerQuantity").value.trim();
-    const message = document.getElementById("buyerMessage").value.trim();
+// ================================
+// GLOBAL VARIABLES
+// ================================
 
-    if (!name || !email || !mobile || !product || !quantity) {
-  alert("⚠️ Please fill Name, Email, Mobile, Product and Quantity.");
-  return;
+let selectedProduct = null;
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+
+// ================================
+// HELPER
+// ================================
+
+function $(id) {
+  return document.getElementById(id);
+}
+
+
+// ================================
+// UPDATE COUNTS
+// ================================
+
+function updateCounts() {
+
+  if ($("cartCount")) {
+    $("cartCount").innerText = cart.length;
+  }
+
+  if ($("totalCart")) {
+    $("totalCart").innerText = cart.length;
+  }
+
+  if ($("totalWishlist")) {
+    $("totalWishlist").innerText = wishlist.length;
+  }
+}
+
+
+// ================================
+// SAVE LOCAL DATA
+// ================================
+
+function saveLocalData() {
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+
+  localStorage.setItem("wishlist", JSON.stringify(wishlist));
+
+  updateCounts();
+}
+
+
+// ================================
+// REGISTER
+// ================================
+
+if ($("registerBtn")) {
+
+  $("registerBtn").addEventListener("click", async () => {
+
+    const name = $("regName").value.trim();
+    const email = $("regEmail").value.trim();
+    const password = $("regPassword").value;
+    const type = $("userType").value;
+
+    if (!name || !email || !password) {
+
+      alert("⚠️ Name, Email aur Password bharna zaroori hai.");
+
+      return;
     }
 
-    const enquiry = {
-  name: name,
-  email: email,
-  mobile: mobile,
-  product: product,
-      quantity: quantity,
-      message: message,
-      date: new Date().toLocaleString()
-    };
+    if (password.length < 6) {
+
+      alert("⚠️ Password kam se kam 6 characters ka hona chahiye.");
+
+      return;
+    }
 
     try {
 
-      await push(ref(db, "buyerEnquiries"), enquiry);
+      const userCredential =
+        await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
 
-      alert("✅ Requirement Sent Successfully!");
+      await set(
+        ref(db, "users/" + userCredential.user.uid),
+        {
+          name: name,
+          email: email,
+          type: type,
+          createdAt: new Date().toLocaleString()
+        }
+      );
 
-      document.getElementById("buyerName").value = "";
-      document.getElementById("buyerEmail").value = "";
-      document.getElementById("buyerMobile").value = "";
-      document.getElementById("buyerProduct").value = "";
-      document.getElementById("buyerQuantity").value = "";
-      document.getElementById("buyerMessage").value = "";
+      alert("✅ Account Created Successfully!");
+
+      $("regName").value = "";
+      $("regEmail").value = "";
+      $("regPassword").value = "";
 
     } catch (error) {
 
-      alert("❌ Error: " + error.message);
+      alert("❌ " + error.message);
 
     }
 
   });
 
 }
-const storage = getStorage(app);
-    document.getElementById("joinSupplierBtn").addEventListener("click", async () => {
 
-  const name = document.getElementById("supplierName").value.trim();
-  const company = document.getElementById("supplierCompany").value.trim();
-  const mobile = document.getElementById("supplierMobile").value.trim();
-  const email = document.getElementById("supplierEmail").value.trim();
-  const location = document.getElementById("supplierLocation").value.trim();
-  const product = document.getElementById("supplierProduct").value.trim();
-  const price = document.getElementById("supplierPrice").value.trim();
-  const minQty = document.getElementById("supplierMinQty").value.trim();
-  const supply = document.getElementById("supplierSupply").value;
-  const description = document.getElementById("supplierDescription").value.trim();
 
-  if (!name || !mobile || !product || !location) {
-    alert("⚠️ Name, Mobile, Product aur Location bharna zaroori hai.");
-    return;
-  }
+// ================================
+// LOGIN
+// ================================
 
-  const supplier = {
-    name: name,
-    company: company,
-    mobile: mobile,
-    email: email,
-    location: location,
-    product: product,
-    price: price,
-    minQty: minQty,
-    supply: supply,
-    description: description,
-    date: new Date().toLocaleString(),
-    status: "New"
-  };
+if ($("loginBtn")) {
 
-  try {
+  $("loginBtn").addEventListener("click", async () => {
 
-    await push(ref(db, "suppliers"), supplier);
+    const email =
+      document.querySelector("#login input[type=email]").value.trim();
 
-    alert("✅ Supplier Registration Successfully Sent!");
+    const password =
+      document.querySelector("#login input[type=password]").value;
 
-    document.getElementById("supplierName").value = "";
-    document.getElementById("supplierCompany").value = "";
-    document.getElementById("supplierMobile").value = "";
-    document.getElementById("supplierEmail").value = "";
-    document.getElementById("supplierLocation").value = "";
-    document.getElementById("supplierProduct").value = "";
-    document.getElementById("supplierPrice").value = "";
-    document.getElementById("supplierMinQty").value = "";
-    document.getElementById("supplierSupply").value = "";
-    document.getElementById("supplierDescription").value = "";
+    if (!email || !password) {
 
-  } catch (error) {
+      alert("⚠️ Email aur Password bharna zaroori hai.");
 
-    alert("❌ Error: " + error.message);
-
-  }
-
-});
-console.log("Firebase Connected Successfully");
-    alert("JavaScript Loaded");
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-  signOut(auth)
-    .then(() => {
-      alert("Logged Out Successfully!");
-    })
-    .catch((error) => {
-      alert(error.message);
-    });
-});
-
-document.getElementById("registerBtn").addEventListener("click", () => {
-  
-
-  const email = document.getElementById("regEmail").value;
-  const password = document.getElementById("regPassword").value;
-
-  createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-
-  set(
-    ref(db, "users/" + userCredential.user.uid),
-    {
-      name: document.getElementById("regName").value,
-      email: email
+      return;
     }
-  );
 
-  alert("Account Created Successfully!");
+    try {
 
-})
-    .catch((error) => {
-      alert(error.message);
-    });
+      await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
 
-});
-    document.getElementById("loginBtn").addEventListener("click", () => {
+      alert("✅ Login Successful!");
 
-const email = document.querySelector("#login input[type=email]").value;
-const password = document.querySelector("#login input[type=password]").value;
+    } catch (error) {
 
-signInWithEmailAndPassword(auth,email,password)
-.then(() => {
+      alert("❌ " + error.message);
 
-document.querySelector("#login h2").innerHTML =
-"✅ Welcome " + auth.currentUser.email;
+    }
 
-document.getElementById("loginBtn").style.display = "none";
+  });
 
-alert("Login Successful!");
-  document.querySelector("#login input[type=email]").style.display = "none";
-document.querySelector("#login input[type=password]").style.display = "none";
-document.getElementById("loginBtn").style.display = "none";
-document.getElementById("resetBtn").style.display = "none";
-document.getElementById("logoutBtn").style.display = "inline-block";
-  document.getElementById("resetBtn").style.display = "none";
-document.querySelector("#login input[type=email]").style.display = "none";
-document.querySelector("#login input[type=password]").style.display = "none";
-  document.getElementById("register").style.display = "none";
-})
-.catch((error)=>{
-alert(error.message);
-});
+}
 
-});
-    document.getElementById("resetBtn").addEventListener("click", () => {
 
-const email = document.querySelector("#login input[type=email]").value;
+// ================================
+// FORGOT PASSWORD
+// ================================
 
-sendPasswordResetEmail(auth, email)
-.then(() => {
-alert("Password reset email sent! Gmail inbox check karo.");
-})
-.catch((error) => {
-alert(error.message);
-});
+if ($("resetBtn")) {
 
-});
-  
-document.getElementById("uploadBtn").addEventListener("click", async () => {
+  $("resetBtn").addEventListener("click", async () => {
 
-  const file = document.getElementById("productImage").files[0];
-  let imageURL = "";
+    const email =
+      document.querySelector("#login input[type=email]").value.trim();
 
-  try {
+    if (!email) {
 
-    imageURL = "";
+      alert("⚠️ Pehle apna Email enter karo.");
 
-    const product = {
-  name: document.getElementById("productName").value,
-  price: document.getElementById("productPrice").value,
-  category: document.getElementById("productCategory").value,
-  description: document.getElementById("productDescription").value,
-  image: imageURL,
-  sellerName: document.getElementById("sellerName").value,
-  sellerCompany: document.getElementById("sellerCompany").value,
-  sellerPhone: document.getElementById("sellerPhone").value
-};
+      return;
+    }
 
-    await push(ref(db, "products"), product);
+    try {
 
-    alert("✅ Product Uploaded Successfully!");
+      await sendPasswordResetEmail(auth, email);
 
-    document.getElementById("productName").value = "";
-    document.getElementById("productPrice").value = "";
-    document.getElementById("productCategory").value = "";
-    document.getElementById("productDescription").value = "";
-    document.getElementById("productImage").value = "";
+      alert("✅ Password reset email bhej diya gaya. Gmail check karo.");
 
-  } catch (error) {
-    alert(error.message);
-  }
+    } catch (error) {
 
-});
-    onAuthStateChanged(auth, (user) => {
+      alert("❌ " + error.message);
+
+    }
+
+  });
+
+}
+
+
+// ================================
+// LOGOUT
+// ================================
+
+if ($("logoutBtn")) {
+
+  $("logoutBtn").addEventListener("click", async () => {
+
+    try {
+
+      await signOut(auth);
+
+      alert("✅ Logged Out Successfully!");
+
+    } catch (error) {
+
+      alert("❌ " + error.message);
+
+    }
+
+  });
+
+}
+
+
+// ================================
+// AUTH STATE
+// ================================
+
+onAuthStateChanged(auth, async (user) => {
+
+  const emailInput =
+    document.querySelector("#login input[type=email]");
+
+  const passwordInput =
+    document.querySelector("#login input[type=password]");
 
   if (user) {
 
-    document.querySelector("#login h2").innerHTML =
-      "✅ Welcome<br>" + user.email;
-onValue(ref(db, "users/" + user.uid), (snapshot) => {
+    if ($("loginBtn")) {
+      $("loginBtn").style.display = "none";
+    }
 
-  let data = snapshot.val();
+    if ($("resetBtn")) {
+      $("resetBtn").style.display = "none";
+    }
 
-  if (data && data.type === "Seller") {
+    if ($("logoutBtn")) {
+      $("logoutBtn").style.display = "inline-block";
+    }
 
-    document.getElementById("sellerMenu").style.display = "inline-block";
-    document.getElementById("sellerProfileMenu").style.display = "inline-block";
-    document.getElementById("sellerOrdersMenu").style.display = "inline-block";
+    if (emailInput) {
+      emailInput.style.display = "none";
+    }
+
+    if (passwordInput) {
+      passwordInput.style.display = "none";
+    }
+
+    const userSnap =
+      await get(ref(db, "users/" + user.uid));
+
+    const userData = userSnap.exists()
+      ? userSnap.val()
+      : {};
+
+    if ($("login")) {
+
+      $("login").querySelector("h2").innerHTML =
+        "✅ Welcome<br>" +
+        (userData.name || user.email);
+
+    }
+
+    // Seller menus
+
+    const isSeller = userData.type === "Seller";
+
+    if ($("sellerMenu")) {
+      $("sellerMenu").style.display =
+        isSeller ? "inline-block" : "none";
+    }
+
+    if ($("sellerProfileMenu")) {
+      $("sellerProfileMenu").style.display =
+        isSeller ? "inline-block" : "none";
+    }
+
+    if ($("sellerOrdersMenu")) {
+      $("sellerOrdersMenu").style.display =
+        isSeller ? "inline-block" : "none";
+    }
 
   } else {
 
-    document.getElementById("sellerMenu").style.display = "none";
-    document.getElementById("sellerProfileMenu").style.display = "none";
-    document.getElementById("sellerOrdersMenu").style.display = "none";
-
-  }
-
-});
-    document.querySelector("#login input[type=email]").style.display = "none";
-document.querySelector("#login input[type=password]").style.display = "none";
-document.getElementById("loginBtn").style.display = "none";
-document.getElementById("resetBtn").style.display = "none";
-document.getElementById("logoutBtn").style.display = "inline-block";
-    document.getElementById("register").style.display = "none";
-    document.getElementById("logoutBtn").style.display = "inline-block";
-
-  } else {
-document.querySelector("#login input[type=email]").style.display = "block";
-document.querySelector("#login input[type=password]").style.display = "block";
-document.getElementById("loginBtn").style.display = "inline-block";
-document.getElementById("resetBtn").style.display = "inline-block";
-    document.querySelector("#login h2").innerHTML = "🔐 Login";
-    
-    document.getElementById("register").style.display = "block";
-    document.getElementById("logoutBtn").style.display = "none";
-
-  }
-
-});
-    const productsRef = ref(db, "products");
-    const ratingsRef = ref(db, "ratings");
-    const buyerEnquiriesRef = ref(db, "buyerEnquiries");
-
-onValue(buyerEnquiriesRef, (snapshot) => {
-
-  const box = document.getElementById("buyerEnquiriesList");
-
-  if (!box) return;
-
-  box.innerHTML = "";
-
-  if (!snapshot.exists()) {
-    box.innerHTML = "No Buyer Enquiries Yet.";
-    return;
-  }
-
-  snapshot.forEach((childSnapshot) => {
-
-    const enquiry = childSnapshot.val();
-
-    box.innerHTML += `
-      <div class="card">
-        <h3>📩 ${enquiry.product || "Product"}</h3>
-        <p><strong>👤 Buyer:</strong> ${enquiry.name || ""}</p>
-        <p><strong>📧 Email:</strong> ${enquiry.email || ""}</p>
-        <p><strong>📱 WhatsApp:</strong> ${enquiry.mobile || ""}</p>
-        <p><strong>📦 Quantity:</strong> ${enquiry.quantity || ""}</p>
-        <p><strong>📝 Requirement:</strong> ${enquiry.message || ""}</p>
-        <p><strong>🕒 Date:</strong> ${enquiry.date || ""}</p>
-        <p>
-  <p>
-  <a
-    href="https://wa.me/91${(enquiry.mobile || "").replace(/\D/g, "")}?text=${encodeURIComponent(
-      "Hello " + (enquiry.name || "Buyer") +
-      ", I am from ExportHub India. Regarding your requirement for " +
-      (enquiry.product || "") +
-      " (" + (enquiry.quantity || "") + ")."
-    )}"
-    target="_blank"
-    class="btn">
-    📲 Contact Buyer on WhatsApp
-  </a>
-</p>
-      </div>
-    `;
-
-  });
-
-});
-    window.editProduct = async function(productKey) {
-
-  const newName = prompt("New Product Name");
-  if (newName === null) return;
-
-  const newPrice = prompt("New Price");
-  if (newPrice === null) return;
-
-  const newCategory = prompt("New Category");
-  if (newCategory === null) return;
-
-  const newDescription = prompt("New Description");
-  if (newDescription === null) return;
-
-  try {
-    await update(ref(db, "products/" + productKey), {
-      name: newName,
-      price: newPrice,
-      category: newCategory,
-      description: newDescription
-    });
-
-    alert("✅ Product Updated Successfully!");
-  } catch (error) {
-    alert(error.message);
-  }
-};
-
-window.deleteProduct = async function(productKey) {
-
-  if (!confirm("Delete this product?")) return;
-
-  try {
-    await remove(ref(db, "products/" + productKey));
-    alert("✅ Product Deleted Successfully!");
-  } catch (error) {
-    alert(error.message);
-  }
-
-};
-    const ordersRef = ref(db, "orders");
-    const sellerOrdersBox = document.getElementById("sellerOrdersList");
-    const sellerRef = ref(db, "sellerProfile");
-
-document.getElementById("saveSellerBtn").addEventListener("click", async () => {
-
-  if (!auth.currentUser) {
-    alert("⚠️ Please Login First");
-    return;
-  }
-
-  try {
-    await set(ref(db, "sellerProfile/" + auth.currentUser.uid), {
-      name: document.getElementById("sellerName").value,
-      company: document.getElementById("sellerCompany").value,
-      phone: document.getElementById("sellerPhone").value,
-      email: document.getElementById("sellerEmail").value,
-      address: document.getElementById("sellerAddress").value
-    });
-
-    alert("✅ Seller Profile Saved Successfully!");
-
-  } catch (error) {
-    alert(error.message);
-  }
-
-});
-    const searchBox = document.getElementById("searchBox");
-    searchBox.addEventListener("input", () => {
-  get(productsRef).then((snapshot) => {
-
-    const box = document.getElementById("allProducts");
-    box.innerHTML = "";
-
-    snapshot.forEach((child) => {
-const key = child.key;
-      const p = child.val();
-
-      if (
-        searchBox.value &&
-        !p.name.toLowerCase().includes(searchBox.value.toLowerCase())
-      ) {
-        return;
-      }
-
-      box.innerHTML += `
-<div class="card productCard">
-
-<img src="${p.image || 'https://via.placeholder.com/300x180?text=ExportHub+India'}"
-style="width:100%;height:180px;object-fit:cover;border-radius:8px;">
-
-<h3>${p.name}</h3>
-
-<p>💰 ${p.price}</p>
-
-<p>📂 ${p.category}</p>
-
-<p>${p.description}</p>
-<p>🏪 Seller: ${p.sellerName || "Not Available"}</p>
-<div class="rating">
-⭐ ${p.rating || "No Ratings Yet"}
-</div>
-
-<button class="btn ratingBtn" data-key="${key}">
-⭐ Rate Product
-</button>
-<button class="btn addCartBtn">🛒 Add to Cart</button>
-<button class="btn wishlistBtn">
-❤️ Add Wishlist
-</button>
-<button class="btn buyNowBtn">
-💳 Buy Now
-</button>
-
-</div>
-`;
-    });
-
-  });
-});
-document.getElementById("placeOrderBtn").addEventListener("click", () => {
-alert("Place Order Button Clicked");
-  const name = document.getElementById("checkoutName").value.trim();
-const mobile = document.getElementById("checkoutMobile").value.trim();
-const address = document.getElementById("checkoutAddress").value.trim();
-
-alert(
-"Name = " + name +
-"\nMobile = " + mobile +
-"\nAddress = " + address
-);
-
-if (!name || !mobile || !address) {
-alert("⚠️ Please fill Name, Mobile and Address");
-return;
-}
-  if (!auth.currentUser) {
-    alert("⚠️ Please Login First");
-    return;
-  }
-
-
-const order = {
-  user: auth.currentUser.email,
-  name: name,
-  mobile: mobile,
-  address: address,
-  date: new Date().toLocaleString(),
-  seller: selectedProduct?.seller || document.getElementById("sellerName").value.trim(),
-productName: selectedProduct ? selectedProduct.name : "",
-productPrice: selectedProduct ? selectedProduct.price : "",
-  status: "Pending"
-};
-  push(ref(db, "orders"), order)
-    .then(() => {
-      alert("✅ Order Placed Successfully!");
-
-      document.getElementById("checkoutName").value = "";
-      document.getElementById("checkoutMobile").value = "";
-      document.getElementById("checkoutAddress").value = "";
-
-    })
-    .catch((error) => {
-      alert(error.message);
-    });
-
-});
-onValue(productsRef, (snapshot) => {
-
-  const box = document.getElementById("allProducts");
-  box.innerHTML = "";
-const adminBox = document.getElementById("adminProducts");
-adminBox.innerHTML = "";
-  document.getElementById("totalProducts").innerText = snapshot.size;
-  let myProducts = 0;
-  const myProductsList = document.getElementById("myProductsList");
-myProductsList.innerHTML = "";
-  snapshot.forEach((child) => {
-
-    const p = child.val();
-    const key = child.key;
-    
-    if (
-  auth.currentUser &&
-  p.sellerName === document.getElementById("sellerName").value
-) {
-  myProducts++;
-
-  myProductsList.innerHTML += `
-  <div class="card">
-    <h3>${p.name}</h3>
-    <p>💰 ${p.price}</p>
-    <p>📂 ${p.category}</p>
-
-    <button class="btn" onclick="editProduct('${key}')">
-      ✏️ Edit
-    </button>
-
-    <button class="btn" onclick="deleteProduct('${key}')">
-      🗑️ Delete
-    </button>
-  </div>
-`;
-    }
-adminBox.innerHTML += `
-<div class="card">
-  <h3>${p.name}</h3>
-  <p>💰 ${p.price}</p>
-  <button class="btn" onclick="editProduct('${key}')">
-✏️ Edit Product
-</button>
-  <button class="btn" onclick="deleteProduct('${key}')">
-    🗑 Delete Product
-  </button>
-</div>
-`;
-if (
-  searchBox.value &&
-  !p.name.toLowerCase().includes(searchBox.value.toLowerCase())
-) {
-  return;
-}
-    box.innerHTML += `
-<div class="card productCard">
-<img src="${p.image || 'https://via.placeholder.com/300x180?text=ExportHub+India'}"
-style="width:100%;height:180px;object-fit:cover;border-radius:8px;">
-
-
-<h3>${p.name}</h3>
-
-<p>💰 ${p.price}</p>
-
-<p>📂 ${p.category}</p>
-
-<p>${p.description}</p>
-<p>🏪 Seller: ${p.sellerName || "Not Available"}</p>
-<div class="rating">
-⭐ ${p.rating || "No Ratings Yet"}
-</div>
-
-<button class="btn ratingBtn" data-key="${child.key}">
-⭐ Rate Product
-</button>
-<button class="btn addCartBtn">
-🛒 Add to Cart
-</button>
-<button class="btn wishlistBtn">
-❤️ Add Wishlist
-</button>
-<button class="btn buyNowBtn">
-💳 Buy Now
-</button>
-<button class="btn shareBtn">
-📤 Share Product
-</button>
-${auth.currentUser && p.sellerName === document.getElementById("sellerName").value ? `
-<button class="btn" onclick="editProduct('${child.key}')">
-✏️ Edit
-</button>
-
-<button class="btn" onclick="deleteProduct('${child.key}')">
-🗑️ Delete
-</button>
-` : ""}
-      </div>
-    `;
-
-  });
-document.getElementById("myProducts").innerText = myProducts;
-});
-    let selectedProduct = null;
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-const wishlistBox = document.getElementById("wishlistItems");
-    
-document.addEventListener("click", (e) => {
-if (e.target.classList.contains("buyNowBtn")) {
-
-  const card = e.target.closest(".card");
-
-  const productName =
-    card.querySelector("h3")?.innerText?.trim() || "Selected Product";
-
-  const productPrice =
-    card.querySelector("p")?.innerText?.trim() || "Price Not Available";
-
-  let sellerName =
-    document.getElementById("sellerName")?.value?.trim() || "";
-
-  if (!sellerName && auth.currentUser) {
-    sellerName = auth.currentUser.email;
-  }
-
-  if (!sellerName) {
-    sellerName = "ExportHub India Seller";
-  }
-
-  selectedProduct = {
-    name: productName,
-    price: productPrice,
-    seller: sellerName
-  };
-
-  document.getElementById("checkout").scrollIntoView({
-    behavior: "smooth"
-  });
-
-  alert("✅ Product Selected: " + productName);
-
-  return;
-}
-
-  if (e.target.classList.contains("wishlistBtn")) {
-e.stopPropagation();
-    const card = e.target.closest(".card");
-
-    const name = card.querySelector("h3").innerText;
-    const price = card.querySelector("p").innerText;
-const exists = wishlist.find(item => item.name === name);
-
-if (exists) {
-  alert("❤️ Product pehle se Wishlist me hai");
-  return;
-}
-    wishlist.push({ name, price });
-localStorage.setItem("wishlist", JSON.stringify(wishlist));
-    wishlistBox.innerHTML = "";
-
-    wishlist.forEach((item, index) => {
-  wishlistBox.innerHTML += `
-      <div class="card">
-        <h3>${item.name}</h3>
-        <p>${item.price}</p>
-        <button class="btn removeWishlistBtn" data-index="${index}">
-          ❌ Remove
-        </button>
-      </div>`;
-});
-
-    alert("❤️ Product Added to Wishlist");
-
-  }
-
-});
-    document.addEventListener("click", (e) => {
-  if (e.target.classList.contains("removeWishlistBtn")) {
-    const index = e.target.dataset.index;
-
-    wishlist.splice(index, 1);
-    localStorage.setItem("wishlist", JSON.stringify(wishlist));
-
-    alert("❌ Product Removed from Wishlist");
-    wishlistBox.innerHTML = "";
-
-wishlist.forEach((item, index) => {
-  wishlistBox.innerHTML += `
-    <div class="card">
-      <h3>${item.name}</h3>
-      <p>${item.price}</p>
-      <button class="btn removeWishlistBtn" data-index="${index}">
-        ❌ Remove
-      </button>
-    </div>`;
-});
-
-alert("❌ Product Removed from Wishlist");
-  }
-});
-const cartBox = document.getElementById("cartItems");
-document.addEventListener("click", (e) => {
-  if (e.target.classList.contains("addCartBtn")) {
-e.stopPropagation();
-    const card = e.target.closest(".card");
-    const name = card.querySelector("h3").innerText;
-    const price = card.querySelector("p").innerText;
-
-    cart.push({name, price});
-localStorage.setItem("cart", JSON.stringify(cart));
-    document.getElementById("cartCount").innerText = cart.length;
-
-    cartBox.innerHTML = "";
-
-    cart.forEach(item => {
-      cartBox.innerHTML += `
-      <div class="card">
-        <h3>${item.name}</h3>
-        <p>${item.price}</p>
-      </div>`;
-    });
-
-    alert("✅ Product Added to Cart");
-  }
-});
-    // const searchBox = document.getElementById("searchBox");
-
-searchBox.addEventListener("input", function () {
-
-  const value = this.value.toLowerCase();
-
-  // Static Products
-  document.querySelectorAll("#productList .card").forEach(card => {
-    card.style.display =
-      card.innerText.toLowerCase().includes(value) ? "block" : "none";
-  });
-
-  // Uploaded Products
-  document.querySelectorAll("#allProducts .card").forEach(card => {
-    card.style.display =
-      card.innerText.toLowerCase().includes(value) ? "block" : "none";
-  });
-
-});
-    function shareProduct(name, price){
-
-let message =
-"🌍 ExportHub India\n\n" +
-"Product: " + name +
-"\nPrice: " + price +
-"\n\nBuy from ExportHub India";
-
-if(navigator.share){
-  navigator.share({
-    title:"ExportHub India Product",
-    text:message
-  });
-}else{
-  alert(message);
-}
-
-}
-
-
-  document.addEventListener("click", async (e) => {
-
-  if (!e.target.classList.contains("ratingBtn")) return;
-
-  if (!auth.currentUser) {
-    alert("⚠️ Please Login First");
-    return;
-  }
-
-  const productKey = e.target.dataset.key;
-
-  const rating = prompt("⭐ Rate this product (1 to 5)");
-
-  if (!rating || rating < 1 || rating > 5) {
-    alert("Please enter a rating between 1 and 5.");
-    return;
-  }
-
-  await push(ref(db, "ratings/" + productKey), {
-    user: auth.currentUser.email,
-    rating: Number(rating)
-  });
-await update(ref(db, "products/" + productKey), {
-  rating: Number(rating)
-});
-  alert("⭐ Rating Saved Successfully!");
-});
-document.addEventListener("click", (e)=>{
-
-if(e.target.classList.contains("shareBtn")){
-
-const card = e.target.closest(".card");
-
-const name = card.querySelector("h3").innerText;
-const price = card.querySelector("p").innerText;
-
-shareProduct(name, price);
-
-}
-
-})
-    document.addEventListener("click", (e) => {
-if (
-  e.target.classList.contains("wishlistBtn") ||
-  e.target.classList.contains("addCartBtn") ||
-  e.target.classList.contains("shareBtn") ||
-  e.target.classList.contains("ratingBtn") ||
-  e.target.classList.contains("buyNowBtn") ||
-  e.target.innerText.includes("Edit") ||
-  e.target.innerText.includes("Delete")
-) {
-  return;
-}
-  const card = e.target.closest(".productCard");
-  if (!card) return;
-
-  document.getElementById("detailImage").src =
-    card.querySelector("img").src;
-
-  document.getElementById("detailName").innerText =
-    card.querySelector("h3").innerText;
-
-  document.getElementById("detailPrice").innerText =
-    card.querySelectorAll("p")[0].innerText;
-
-  document.getElementById("detailCategory").innerText =
-    card.querySelectorAll("p")[1].innerText;
-
-  
-document.getElementById("detailDescription").innerHTML =
-card.querySelectorAll("p")[2].innerText +
-"<br><br>" +
-card.querySelectorAll("p")[3].innerText;
-  document.getElementById("product-details").style.display = "block";
-
-  document.getElementById("product-details")
-    .scrollIntoView({ behavior: "smooth" });
-
-});
-    onValue(ordersRef, (snapshot) => {
-document.getElementById("totalOrders").innerText = snapshot.numChildren();
-  const ordersBox = document.getElementById("ordersList");
-  ordersBox.innerHTML = "";
-
-  if (!auth.currentUser) {
-    ordersBox.innerHTML = "⚠️ Please Login First";
-    return;
-  }
-sellerOrdersBox.innerHTML = "";
-let sellerFound = false;
-  let found = false;
-
-  snapshot.forEach((child) => {
-
-    const order = child.val();
-if (
-  auth.currentUser &&
-  order.seller === document.getElementById("sellerName").value
-) {
-  alert("Seller Order Found");
-  sellerFound = true;
-
-  sellerOrdersBox.innerHTML += `
-  <div class="card">
-    <h3>👤 ${order.name}</h3>
-    <p>🛍️ Product: ${order.productName || "Not Selected"}</p>
-<p>💰 Price: ${order.productPrice || "Not Available"}</p>
-    <p>📱 ${order.mobile}</p>
-    <p>📍 ${order.address}</p>
-    <p>🕒 ${order.date}</p>
-    <p>📦 Status: ${order.status || "Pending"}</p>
-<button class="btn acceptOrderBtn" data-key="${child.key}">
-✅ Accept
-</button>
-
-<button class="btn rejectOrderBtn" data-key="${child.key}">
-❌ Reject
-</button>
-  </div>
-  `;
-
-}
-    if (order.user === auth.currentUser.email) {
-
-      found = true;
-
-      ordersBox.innerHTML += `
-      <div class="card">
-        <h3>📦 ${order.name}</h3>
-        <p>🛍️ Product: ${order.productName || "Not Selected"}</p>
-<p>💰 Price: ${order.productPrice || "Not Available"}</p>
-        <p>📱 ${order.mobile}</p>
-        <p>📍 ${order.address}</p>
-        <p>🕒 ${order.date}</p>
-        <p>📦 Status: ${order.status || "Pending"}</p>
-      </div>
-      `;
+    if ($("loginBtn")) {
+      $("loginBtn").style.display = "inline-block";
     }
 
-  });
+    if ($("resetBtn")) {
+      $("resetBtn").style.display = "inline-block";
+    }
 
-  if (!found) {
-    ordersBox.innerHTML = "No Orders Yet.";
-  }
-    
-  if (!sellerFound) {
-    sellerOrdersBox.innerHTML = "No Orders Yet.";
-  }
+    if ($("logoutBtn")) {
+      $("logoutBtn").style.display = "none";
+    }
 
-});
-    // Restore Cart
-cartBox.innerHTML = "";
+    if (emailInput) {
+      emailInput.style.display = "block";
+    }
 
-if (cart.length === 0) {
-  cartBox.innerHTML = "No products added yet.";
-} else {
-  cart.forEach(item => {
-    cartBox.innerHTML += `
-      <div class="card">
-        <h3>${item.name}</h3>
-        <p>${item.price}</p>
-      </div>`;
-  });
-}
+    if (passwordInput) {
+      passwordInput.style.display = "block";
+    }
 
-document.getElementById("cartCount").innerText = cart.length;
-document.getElementById("totalCart").innerText = cart.length;
-document.getElementById("totalWishlist").innerText = wishlist.length;
-// Restore Wishlist
-wishlistBox.innerHTML = "";
+    if ($("login")) {
+      $("login").querySelector("h2").innerText = "🔐 Login";
+    }
 
-if (wishlist.length === 0) {
-  wishlistBox.innerHTML = "No wishlist items.";
-} else {
-  wishlist.forEach((item, index) => {
-  wishlistBox.innerHTML += `
-    <div class="card">
-      <h3>${item.name}</h3>
-      <p>${item.price}</p>
-      <button class="btn removeWishlistBtn" data-index="${index}">
-        ❌ Remove
-      </button>
-    </div>`;
-});
-}
-    document.addEventListener("click", async (e) => {
+    if ($("sellerMenu")) {
+      $("sellerMenu").style.display = "none";
+    }
 
-  if (e.target.classList.contains("acceptOrderBtn")) {
+    if ($("sellerProfileMenu")) {
+      $("sellerProfileMenu").style.display = "none";
+    }
 
-    await update(ref(db, "orders/" + e.target.dataset.key), {
-      status: "Accepted"
-    });
+    if ($("sellerOrdersMenu")) {
+      $("sellerOrdersMenu").style.display = "none";
+    }
 
-    alert("✅ Order Accepted");
-  }
-
-  if (e.target.classList.contains("rejectOrderBtn")) {
-
-    await update(ref(db, "orders/" + e.target.dataset.key), {
-      status: "Rejected"
-    });
-
-    alert("❌ Order Rejected");
   }
 
 });
+
+
+// ================================
+// INITIAL COUNT
+// ================================
+
+updateCounts();
+
+console.log("✅ Part 1 JavaScript Loaded");
+
   </script>
 </body>
 </html>
