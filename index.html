@@ -928,7 +928,7 @@ onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})
 <footer style="background:#0b3d91;color:white;text-align:center;padding:12px;font-size:14px;">
 <p>© 2026 ExportHub India | Global Trade Network</p>
 </footer>
-  <script type="module">
+<script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
@@ -955,9 +955,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 
-// ================================
+// ========================================
 // FIREBASE CONFIG
-// ================================
+// ========================================
 
 const firebaseConfig = {
   apiKey: "AIzaSyDK8hxBdK7SNUY6qHqvtKsg9FB4IotvWYA",
@@ -970,360 +970,1197 @@ const firebaseConfig = {
 };
 
 
-// ================================
-// INITIALIZE FIREBASE
-// ================================
+// ========================================
+// INITIALIZE
+// ========================================
 
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 
-await setPersistence(auth, browserLocalPersistence);
+await setPersistence(
+  auth,
+  browserLocalPersistence
+);
 
 const db = getDatabase(app);
 
-console.log("✅ Firebase Connected Successfully");
+const productsRef = ref(db, "products");
+const ordersRef = ref(db, "orders");
 
 
-// ================================
-// GLOBAL VARIABLES
-// ================================
+// ========================================
+// GLOBAL DATA
+// ========================================
 
 let selectedProduct = null;
 
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let cart =
+  JSON.parse(localStorage.getItem("cart")) || [];
 
-let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+let wishlist =
+  JSON.parse(localStorage.getItem("wishlist")) || [];
 
 
-// ================================
-// HELPER
-// ================================
+// ========================================
+// SHORT ID FUNCTION
+// ========================================
 
 function $(id) {
   return document.getElementById(id);
 }
 
 
-// ================================
-// UPDATE COUNTS
-// ================================
-
-function updateCounts() {
-
-  if ($("cartCount")) {
-    $("cartCount").innerText = cart.length;
-  }
-
-  if ($("totalCart")) {
-    $("totalCart").innerText = cart.length;
-  }
-
-  if ($("totalWishlist")) {
-    $("totalWishlist").innerText = wishlist.length;
-  }
-}
-
-
-// ================================
-// SAVE LOCAL DATA
-// ================================
+// ========================================
+// LOCAL DATA
+// ========================================
 
 function saveLocalData() {
 
-  localStorage.setItem("cart", JSON.stringify(cart));
+  localStorage.setItem(
+    "cart",
+    JSON.stringify(cart)
+  );
 
-  localStorage.setItem("wishlist", JSON.stringify(wishlist));
+  localStorage.setItem(
+    "wishlist",
+    JSON.stringify(wishlist)
+  );
 
   updateCounts();
 }
 
 
-// ================================
+// ========================================
+// COUNTS
+// ========================================
+
+function updateCounts() {
+
+  if ($("cartCount")) {
+    $("cartCount").innerText =
+      cart.length;
+  }
+
+  if ($("totalCart")) {
+    $("totalCart").innerText =
+      cart.length;
+  }
+
+  if ($("totalWishlist")) {
+    $("totalWishlist").innerText =
+      wishlist.length;
+  }
+}
+
+
+// ========================================
 // REGISTER
-// ================================
+// ========================================
 
 if ($("registerBtn")) {
 
-  $("registerBtn").addEventListener("click", async () => {
+  $("registerBtn").addEventListener(
+    "click",
+    async () => {
 
-    const name = $("regName").value.trim();
-    const email = $("regEmail").value.trim();
-    const password = $("regPassword").value;
-    const type = $("userType").value;
+      const name =
+        $("regName").value.trim();
 
-    if (!name || !email || !password) {
+      const email =
+        $("regEmail").value.trim();
 
-      alert("⚠️ Name, Email aur Password bharna zaroori hai.");
+      const password =
+        $("regPassword").value;
 
-      return;
+      const type =
+        $("userType").value;
+
+      if (!name || !email || !password) {
+
+        alert(
+          "⚠️ Name, Email aur Password bharna zaroori hai."
+        );
+
+        return;
+      }
+
+      if (password.length < 6) {
+
+        alert(
+          "⚠️ Password kam se kam 6 characters ka hona chahiye."
+        );
+
+        return;
+      }
+
+      try {
+
+        const result =
+          await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+
+        await set(
+          ref(
+            db,
+            "users/" + result.user.uid
+          ),
+          {
+            name: name,
+            email: email,
+            type: type,
+            createdAt:
+              new Date().toLocaleString()
+          }
+        );
+
+        alert(
+          "✅ Account Created Successfully!"
+        );
+
+        $("regName").value = "";
+        $("regEmail").value = "";
+        $("regPassword").value = "";
+
+      } catch (error) {
+
+        alert(
+          "❌ " + error.message
+        );
+
+      }
+
     }
+  );
 
-    if (password.length < 6) {
+}
 
-      alert("⚠️ Password kam se kam 6 characters ka hona chahiye.");
 
-      return;
-    }
+// ========================================
+// LOGIN
+// ========================================
 
-    try {
+if ($("loginBtn")) {
 
-      const userCredential =
-        await createUserWithEmailAndPassword(
+  $("loginBtn").addEventListener(
+    "click",
+    async () => {
+
+      const email =
+        document.querySelector(
+          "#login input[type=email]"
+        ).value.trim();
+
+      const password =
+        document.querySelector(
+          "#login input[type=password]"
+        ).value;
+
+      if (!email || !password) {
+
+        alert(
+          "⚠️ Email aur Password bharna zaroori hai."
+        );
+
+        return;
+      }
+
+      try {
+
+        await signInWithEmailAndPassword(
           auth,
           email,
           password
         );
 
-      await set(
-        ref(db, "users/" + userCredential.user.uid),
-        {
-          name: name,
-          email: email,
-          type: type,
-          createdAt: new Date().toLocaleString()
-        }
-      );
+        alert(
+          "✅ Login Successful!"
+        );
 
-      alert("✅ Account Created Successfully!");
+      } catch (error) {
 
-      $("regName").value = "";
-      $("regEmail").value = "";
-      $("regPassword").value = "";
+        alert(
+          "❌ " + error.message
+        );
 
-    } catch (error) {
-
-      alert("❌ " + error.message);
+      }
 
     }
-
-  });
+  );
 
 }
 
 
-// ================================
-// LOGIN
-// ================================
-
-if ($("loginBtn")) {
-
-  $("loginBtn").addEventListener("click", async () => {
-
-    const email =
-      document.querySelector("#login input[type=email]").value.trim();
-
-    const password =
-      document.querySelector("#login input[type=password]").value;
-
-    if (!email || !password) {
-
-      alert("⚠️ Email aur Password bharna zaroori hai.");
-
-      return;
-    }
-
-    try {
-
-      await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      alert("✅ Login Successful!");
-
-    } catch (error) {
-
-      alert("❌ " + error.message);
-
-    }
-
-  });
-
-}
-
-
-// ================================
+// ========================================
 // FORGOT PASSWORD
-// ================================
+// ========================================
 
 if ($("resetBtn")) {
 
-  $("resetBtn").addEventListener("click", async () => {
+  $("resetBtn").addEventListener(
+    "click",
+    async () => {
 
-    const email =
-      document.querySelector("#login input[type=email]").value.trim();
+      const email =
+        document.querySelector(
+          "#login input[type=email]"
+        ).value.trim();
 
-    if (!email) {
+      if (!email) {
 
-      alert("⚠️ Pehle apna Email enter karo.");
+        alert(
+          "⚠️ Pehle Email enter karo."
+        );
 
-      return;
+        return;
+      }
+
+      try {
+
+        await sendPasswordResetEmail(
+          auth,
+          email
+        );
+
+        alert(
+          "✅ Password reset email bhej diya gaya. Gmail check karo."
+        );
+
+      } catch (error) {
+
+        alert(
+          "❌ " + error.message
+        );
+
+      }
+
     }
-
-    try {
-
-      await sendPasswordResetEmail(auth, email);
-
-      alert("✅ Password reset email bhej diya gaya. Gmail check karo.");
-
-    } catch (error) {
-
-      alert("❌ " + error.message);
-
-    }
-
-  });
+  );
 
 }
 
 
-// ================================
+// ========================================
 // LOGOUT
-// ================================
+// ========================================
 
 if ($("logoutBtn")) {
 
-  $("logoutBtn").addEventListener("click", async () => {
+  $("logoutBtn").addEventListener(
+    "click",
+    async () => {
 
-    try {
+      try {
 
-      await signOut(auth);
+        await signOut(auth);
 
-      alert("✅ Logged Out Successfully!");
+        alert(
+          "✅ Logout Successful!"
+        );
 
-    } catch (error) {
+      } catch (error) {
 
-      alert("❌ " + error.message);
+        alert(
+          "❌ " + error.message
+        );
+
+      }
 
     }
-
-  });
+  );
 
 }
 
 
-// ================================
+// ========================================
 // AUTH STATE
-// ================================
+// ========================================
 
-onAuthStateChanged(auth, async (user) => {
+onAuthStateChanged(
+  auth,
+  async (user) => {
 
-  const emailInput =
-    document.querySelector("#login input[type=email]");
+    const emailInput =
+      document.querySelector(
+        "#login input[type=email]"
+      );
 
-  const passwordInput =
-    document.querySelector("#login input[type=password]");
+    const passwordInput =
+      document.querySelector(
+        "#login input[type=password]"
+      );
 
-  if (user) {
+    if (user) {
 
-    if ($("loginBtn")) {
-      $("loginBtn").style.display = "none";
+      let userData = {};
+
+      try {
+
+        const snap =
+          await get(
+            ref(
+              db,
+              "users/" + user.uid
+            )
+          );
+
+        if (snap.exists()) {
+          userData = snap.val();
+        }
+
+      } catch (error) {
+
+        console.log(
+          "User data error:",
+          error
+        );
+
+      }
+
+
+      if ($("loginBtn"))
+        $("loginBtn").style.display =
+          "none";
+
+      if ($("resetBtn"))
+        $("resetBtn").style.display =
+          "none";
+
+      if ($("logoutBtn"))
+        $("logoutBtn").style.display =
+          "inline-block";
+
+      if (emailInput)
+        emailInput.style.display =
+          "none";
+
+      if (passwordInput)
+        passwordInput.style.display =
+          "none";
+
+
+      if ($("login")) {
+
+        $("login").querySelector(
+          "h2"
+        ).innerHTML =
+          "✅ Welcome<br>" +
+          (
+            userData.name ||
+            user.email
+          );
+
+      }
+
+
+      const isSeller =
+        userData.type === "Seller";
+
+
+      if ($("sellerMenu"))
+        $("sellerMenu").style.display =
+          isSeller
+            ? "inline-block"
+            : "none";
+
+      if ($("sellerProfileMenu"))
+        $("sellerProfileMenu").style.display =
+          isSeller
+            ? "inline-block"
+            : "none";
+
+      if ($("sellerOrdersMenu"))
+        $("sellerOrdersMenu").style.display =
+          isSeller
+            ? "inline-block"
+            : "none";
+
+
+      // Load seller profile
+
+      if (isSeller) {
+
+        loadSellerProfile(user.uid);
+
+      }
+
+    } else {
+
+      if ($("loginBtn"))
+        $("loginBtn").style.display =
+          "inline-block";
+
+      if ($("resetBtn"))
+        $("resetBtn").style.display =
+          "inline-block";
+
+      if ($("logoutBtn"))
+        $("logoutBtn").style.display =
+          "none";
+
+      if (emailInput)
+        emailInput.style.display =
+          "block";
+
+      if (passwordInput)
+        passwordInput.style.display =
+          "block";
+
+
+      if ($("login")) {
+
+        $("login").querySelector(
+          "h2"
+        ).innerText =
+          "🔐 Login";
+
+      }
+
+
+      if ($("sellerMenu"))
+        $("sellerMenu").style.display =
+          "none";
+
+      if ($("sellerProfileMenu"))
+        $("sellerProfileMenu").style.display =
+          "none";
+
+      if ($("sellerOrdersMenu"))
+        $("sellerOrdersMenu").style.display =
+          "none";
+
     }
 
-    if ($("resetBtn")) {
-      $("resetBtn").style.display = "none";
+    loadMyProducts();
+    loadOrders();
+
+  }
+);
+
+
+// ========================================
+// SELLER PROFILE SAVE
+// ========================================
+
+if ($("saveSellerBtn")) {
+
+  $("saveSellerBtn").addEventListener(
+    "click",
+    async () => {
+
+      if (!auth.currentUser) {
+
+        alert(
+          "⚠️ Pehle Seller Login karo."
+        );
+
+        return;
+      }
+
+      const name =
+        $("sellerName").value.trim();
+
+      const company =
+        $("sellerCompany").value.trim();
+
+      const phone =
+        $("sellerPhone").value.trim();
+
+      const email =
+        $("sellerEmail").value.trim();
+
+      const address =
+        $("sellerAddress").value.trim();
+
+      if (!name || !phone) {
+
+        alert(
+          "⚠️ Seller Name aur Mobile Number bharna zaroori hai."
+        );
+
+        return;
+      }
+
+      try {
+
+        await set(
+          ref(
+            db,
+            "sellerProfile/" +
+            auth.currentUser.uid
+          ),
+          {
+            name,
+            company,
+            phone,
+            email,
+            address
+          }
+        );
+
+        alert(
+          "✅ Seller Profile Saved Successfully!"
+        );
+
+      } catch (error) {
+
+        alert(
+          "❌ " + error.message
+        );
+
+      }
+
     }
+  );
 
-    if ($("logoutBtn")) {
-      $("logoutBtn").style.display = "inline-block";
-    }
+}
 
-    if (emailInput) {
-      emailInput.style.display = "none";
-    }
 
-    if (passwordInput) {
-      passwordInput.style.display = "none";
-    }
+// ========================================
+// LOAD SELLER PROFILE
+// ========================================
 
-    const userSnap =
-      await get(ref(db, "users/" + user.uid));
+async function loadSellerProfile(uid) {
 
-    const userData = userSnap.exists()
-      ? userSnap.val()
-      : {};
+  try {
 
-    if ($("login")) {
+    const snap =
+      await get(
+        ref(
+          db,
+          "sellerProfile/" + uid
+        )
+      );
 
-      $("login").querySelector("h2").innerHTML =
-        "✅ Welcome<br>" +
-        (userData.name || user.email);
+    if (!snap.exists()) return;
 
-    }
+    const data =
+      snap.val();
 
-    // Seller menus
+    if ($("sellerName"))
+      $("sellerName").value =
+        data.name || "";
 
-    const isSeller = userData.type === "Seller";
+    if ($("sellerCompany"))
+      $("sellerCompany").value =
+        data.company || "";
 
-    if ($("sellerMenu")) {
-      $("sellerMenu").style.display =
-        isSeller ? "inline-block" : "none";
-    }
+    if ($("sellerPhone"))
+      $("sellerPhone").value =
+        data.phone || "";
 
-    if ($("sellerProfileMenu")) {
-      $("sellerProfileMenu").style.display =
-        isSeller ? "inline-block" : "none";
-    }
+    if ($("sellerEmail"))
+      $("sellerEmail").value =
+        data.email || "";
 
-    if ($("sellerOrdersMenu")) {
-      $("sellerOrdersMenu").style.display =
-        isSeller ? "inline-block" : "none";
-    }
+    if ($("sellerAddress"))
+      $("sellerAddress").value =
+        data.address || "";
 
-  } else {
+  } catch (error) {
 
-    if ($("loginBtn")) {
-      $("loginBtn").style.display = "inline-block";
-    }
-
-    if ($("resetBtn")) {
-      $("resetBtn").style.display = "inline-block";
-    }
-
-    if ($("logoutBtn")) {
-      $("logoutBtn").style.display = "none";
-    }
-
-    if (emailInput) {
-      emailInput.style.display = "block";
-    }
-
-    if (passwordInput) {
-      passwordInput.style.display = "block";
-    }
-
-    if ($("login")) {
-      $("login").querySelector("h2").innerText = "🔐 Login";
-    }
-
-    if ($("sellerMenu")) {
-      $("sellerMenu").style.display = "none";
-    }
-
-    if ($("sellerProfileMenu")) {
-      $("sellerProfileMenu").style.display = "none";
-    }
-
-    if ($("sellerOrdersMenu")) {
-      $("sellerOrdersMenu").style.display = "none";
-    }
+    console.log(
+      "Seller profile error:",
+      error
+    );
 
   }
 
-});
+}
 
 
-// ================================
-// INITIAL COUNT
-// ================================
+// ========================================
+// PRODUCT UPLOAD
+// ========================================
 
-updateCounts();
+if ($("uploadBtn")) {
 
-console.log("✅ Part 1 JavaScript Loaded");
+  $("uploadBtn").addEventListener(
+    "click",
+    async () => {
 
-  // ================================
+      if (!auth.currentUser) {
+
+        alert(
+          "⚠️ Product upload karne ke liye Login karo."
+        );
+
+        return;
+      }
+
+      const name =
+        $("productName").value.trim();
+
+      const price =
+        $("productPrice").value.trim();
+
+      const category =
+        $("productCategory").value;
+
+      const description =
+        $("productDescription").value.trim();
+
+      const sellerName =
+        $("sellerName")?.value.trim() || "";
+
+      const sellerCompany =
+        $("sellerCompany")?.value.trim() || "";
+
+      const sellerPhone =
+        $("sellerPhone")?.value.trim() || "";
+
+
+      if (!name || !price || !category) {
+
+        alert(
+          "⚠️ Product Name, Price aur Category bharna zaroori hai."
+        );
+
+        return;
+      }
+
+      if (!sellerName) {
+
+        alert(
+          "⚠️ Pehle Seller Profile mein Seller Name save karo."
+        );
+
+        return;
+      }
+
+
+      const product = {
+
+        name,
+        price,
+        category,
+        description,
+
+        // Image upload abhi Firebase Storage ke bina
+        image: "",
+
+        sellerName,
+        sellerCompany,
+        sellerPhone,
+
+        sellerUid:
+          auth.currentUser.uid,
+
+        date:
+          new Date().toLocaleString(),
+
+        rating: 0
+
+      };
+
+
+      try {
+
+        await push(
+          productsRef,
+          product
+        );
+
+        alert(
+          "✅ Product Uploaded Successfully!"
+        );
+
+        $("productName").value = "";
+        $("productPrice").value = "";
+        $("productCategory").value = "";
+        $("productDescription").value = "";
+
+        if ($("productImage"))
+          $("productImage").value = "";
+
+      } catch (error) {
+
+        alert(
+          "❌ " + error.message
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+// ========================================
+// PRODUCT IMAGE FALLBACK
+// ========================================
+
+function productImage(image) {
+
+  return image ||
+    "https://via.placeholder.com/300x180?text=ExportHub+India";
+
+}
+
+
+// ========================================
+// DISPLAY FIREBASE PRODUCTS
+// ========================================
+
+function renderFirebaseProducts(
+  snapshot,
+  searchText = ""
+) {
+
+  const box =
+    $("allProducts");
+
+  if (!box) return;
+
+  box.innerHTML = "";
+
+  let count = 0;
+
+  snapshot.forEach(
+    (child) => {
+
+      const key =
+        child.key;
+
+      const p =
+        child.val();
+
+      const text = (
+        (p.name || "") +
+        " " +
+        (p.category || "") +
+        " " +
+        (p.description || "") +
+        " " +
+        (p.sellerName || "")
+      ).toLowerCase();
+
+      if (
+        searchText &&
+        !text.includes(
+          searchText.toLowerCase()
+        )
+      ) {
+        return;
+      }
+
+      count++;
+
+
+      box.innerHTML += `
+
+        <div
+          class="card productCard"
+          data-key="${key}"
+        >
+
+          <img
+            src="${productImage(p.image)}"
+            style="
+              width:100%;
+              height:180px;
+              object-fit:cover;
+              border-radius:8px;
+            "
+          >
+
+          <h3>
+            ${p.name || "Product"}
+          </h3>
+
+          <p>
+            💰 ${p.price || "Contact for price"}
+          </p>
+
+          <p>
+            📂 ${p.category || ""}
+          </p>
+
+          <p>
+            ${p.description || ""}
+          </p>
+
+          <p>
+            🏪 Seller:
+            ${p.sellerName || "Not Available"}
+          </p>
+
+          <p>
+            ⭐ ${
+              p.rating || "No Ratings Yet"
+            }
+          </p>
+
+          <button
+            class="btn addCartBtn"
+            data-key="${key}">
+            🛒 Add to Cart
+          </button>
+
+          <button
+            class="btn wishlistBtn"
+            data-key="${key}">
+            ❤️ Wishlist
+          </button>
+
+          <button
+            class="btn buyNowBtn"
+            data-key="${key}">
+            💳 Buy Now
+          </button>
+
+          <button
+            class="btn ratingBtn"
+            data-key="${key}">
+            ⭐ Rate
+          </button>
+
+          <button
+            class="btn shareBtn"
+            data-key="${key}">
+            📤 Share
+          </button>
+
+          ${
+            auth.currentUser &&
+            p.sellerUid ===
+            auth.currentUser.uid
+            ? `
+              <button
+                class="btn editBtn"
+                data-key="${key}">
+                ✏️ Edit
+              </button>
+
+              <button
+                class="btn deleteBtn"
+                data-key="${key}">
+                🗑️ Delete
+              </button>
+            `
+            : ""
+          }
+
+        </div>
+
+      `;
+
+    }
+  );
+
+
+  if (count === 0) {
+
+    box.innerHTML =
+      "🔍 No products found.";
+
+  }
+
+}
+
+
+// ========================================
+// REAL TIME PRODUCTS
+// ========================================
+
+onValue(
+  productsRef,
+  (snapshot) => {
+
+    renderFirebaseProducts(
+      snapshot,
+      $("searchBox")?.value.trim() || ""
+    );
+
+    if ($("totalProducts")) {
+
+      $("totalProducts").innerText =
+        snapshot.exists()
+          ? snapshot.size
+          : 0;
+
+    }
+
+    loadMyProducts();
+
+  }
+);
+
+
+// ========================================
+// SEARCH
+// ========================================
+
+if ($("searchBox")) {
+
+  $("searchBox").addEventListener(
+    "input",
+    async () => {
+
+      const snapshot =
+        await get(productsRef);
+
+      renderFirebaseProducts(
+        snapshot,
+        $("searchBox").value.trim()
+      );
+
+    }
+  );
+
+}
+
+
+// ========================================
+// EDIT PRODUCT
+// ========================================
+
+async function editProduct(key) {
+
+  const snap =
+    await get(
+      ref(db, "products/" + key)
+    );
+
+  if (!snap.exists()) {
+
+    alert(
+      "❌ Product not found."
+    );
+
+    return;
+  }
+
+  const p =
+    snap.val();
+
+
+  const name =
+    prompt(
+      "Product Name:",
+      p.name || ""
+    );
+
+  if (name === null) return;
+
+
+  const price =
+    prompt(
+      "Product Price:",
+      p.price || ""
+    );
+
+  if (price === null) return;
+
+
+  const category =
+    prompt(
+      "Product Category:",
+      p.category || ""
+    );
+
+  if (category === null) return;
+
+
+  const description =
+    prompt(
+      "Product Description:",
+      p.description || ""
+    );
+
+  if (description === null) return;
+
+
+  try {
+
+    await update(
+      ref(
+        db,
+        "products/" + key
+      ),
+      {
+        name,
+        price,
+        category,
+        description
+      }
+    );
+
+    alert(
+      "✅ Product Updated Successfully!"
+    );
+
+  } catch (error) {
+
+    alert(
+      "❌ " + error.message
+    );
+
+  }
+
+}
+
+
+// ========================================
+// DELETE PRODUCT
+// ========================================
+
+async function deleteProduct(key) {
+
+  if (
+    !confirm(
+      "⚠️ Kya aap ye product delete karna chahte ho?"
+    )
+  ) {
+    return;
+  }
+
+  try {
+
+    await remove(
+      ref(
+        db,
+        "products/" + key
+      )
+    );
+
+    alert(
+      "✅ Product Deleted Successfully!"
+    );
+
+  } catch (error) {
+
+    alert(
+      "❌ " + error.message
+    );
+
+  }
+
+}
+
+
+// ========================================
+// CART DISPLAY
+// ========================================
+
+function renderCart() {
+
+  const box =
+    $("cartItems");
+
+  if (!box) return;
+
+  box.innerHTML = "";
+
+  if (cart.length === 0) {
+
+    box.innerHTML =
+      "No products added yet.";
+
+    updateCounts();
+
+    return;
+  }
+
+
+  cart.forEach(
+    (item, index) => {
+
+      box.innerHTML += `
+
+        <div class="card">
+
+          <h3>
+            ${item.name}
+          </h3>
+
+          <p>
+            💰 ${item.price}
+          </p>
+
+          <p>
+            🏪 ${
+              item.sellerName ||
+              "Seller not available"
+            }
+          </p>
+
+          <button
+            class="btn removeCartBtn"
+            data-index="${index}">
+            ❌ Remove
+          </button>
+
+          <button
+            class="btn cartBuyBtn"
+            data-index="${index}">
+            💳 Buy Now
+          </button>
+
+        </div>
+
+      `;
+
+    }
+  );
+
+  updateCounts();
+
+}
+
+
+// ========================================
+// WISHLIST DISPLAY
+// ========================================
+
+function renderWishlist() {
+
+  const box =
+    $("wishlistItems");
+
+  if (!box) return;
+
+  box.innerHTML = "";
+
+  if (wishlist.length === 0) {
+
+    box.innerHTML =
+      "No wishlist items.";
+
+    updateCounts();
+
+    return;
+  }
+
+
+  wishlist.forEach(
+    (item, index) => {
+
+      box.innerHTML += `
+
+        <div class="card">
+
+          <h3>
+            ${item.name}
+          </h3>
+
+          <p>
+            💰 ${item.price}
+          </p>
+
+          <button
+            class="btn removeWishlistBtn"
+            data-index="${index}">
+            ❌ Remove
+          </button>
+
+          <button
+            class="btn wishlistBuyBtn"
+     // ================================
 // PRODUCT DATABASE
 // ================================
 
@@ -1331,7 +2168,7 @@ const productsRef = ref(db, "products");
 
 
 // ================================
-// SELLER PROFILE
+// SELLER PROFILE - SAVE
 // ================================
 
 if ($("saveSellerBtn")) {
@@ -1416,7 +2253,10 @@ onAuthStateChanged(auth, async (user) => {
 
   } catch (error) {
 
-    console.log("Seller profile load error:", error);
+    console.log(
+      "Seller profile load error:",
+      error
+    );
 
   }
 
@@ -1433,15 +2273,24 @@ if ($("uploadBtn")) {
 
     if (!auth.currentUser) {
 
-      alert("⚠️ Product upload karne ke liye Login karo.");
+      alert(
+        "⚠️ Product upload karne ke liye Login karo."
+      );
 
       return;
     }
 
-    const name = $("productName").value.trim();
-    const price = $("productPrice").value.trim();
-    const category = $("productCategory").value;
-    const description = $("productDescription").value.trim();
+    const name =
+      $("productName").value.trim();
+
+    const price =
+      $("productPrice").value.trim();
+
+    const category =
+      $("productCategory").value;
+
+    const description =
+      $("productDescription").value.trim();
 
     const sellerName =
       $("sellerName")?.value.trim() || "";
@@ -1452,6 +2301,7 @@ if ($("uploadBtn")) {
     const sellerPhone =
       $("sellerPhone")?.value.trim() || "";
 
+
     if (!name || !price || !category) {
 
       alert(
@@ -1461,6 +2311,7 @@ if ($("uploadBtn")) {
       return;
     }
 
+
     if (!sellerName) {
 
       alert(
@@ -1469,6 +2320,7 @@ if ($("uploadBtn")) {
 
       return;
     }
+
 
     const product = {
 
@@ -1488,32 +2340,47 @@ if ($("uploadBtn")) {
 
       sellerPhone: sellerPhone,
 
-      sellerUid: auth.currentUser.uid,
+      sellerUid:
+        auth.currentUser.uid,
 
-      date: new Date().toLocaleString(),
+      date:
+        new Date().toLocaleString(),
 
       rating: 0
 
     };
 
+
     try {
 
-      await push(productsRef, product);
+      await push(
+        productsRef,
+        product
+      );
 
-      alert("✅ Product Uploaded Successfully!");
+      alert(
+        "✅ Product Uploaded Successfully!"
+      );
+
 
       $("productName").value = "";
+
       $("productPrice").value = "";
+
       $("productCategory").value = "";
+
       $("productDescription").value = "";
 
       if ($("productImage")) {
         $("productImage").value = "";
       }
 
+
     } catch (error) {
 
-      alert("❌ " + error.message);
+      alert(
+        "❌ " + error.message
+      );
 
     }
 
@@ -1526,9 +2393,13 @@ if ($("uploadBtn")) {
 // DISPLAY PRODUCTS
 // ================================
 
-function renderProducts(snapshot, searchText = "") {
+function renderProducts(
+  snapshot,
+  searchText = ""
+) {
 
-  const box = $("allProducts");
+  const box =
+    $("allProducts");
 
   if (!box) return;
 
@@ -1536,11 +2407,15 @@ function renderProducts(snapshot, searchText = "") {
 
   let count = 0;
 
+
   snapshot.forEach((child) => {
 
-    const key = child.key;
+    const key =
+      child.key;
 
-    const p = child.val();
+    const p =
+      child.val();
+
 
     const name =
       String(p.name || "");
@@ -1554,6 +2429,7 @@ function renderProducts(snapshot, searchText = "") {
     const seller =
       String(p.sellerName || "");
 
+
     const searchableText =
       (
         name +
@@ -1565,25 +2441,33 @@ function renderProducts(snapshot, searchText = "") {
         seller
       ).toLowerCase();
 
+
     if (
       searchText &&
       !searchableText.includes(
         searchText.toLowerCase()
       )
     ) {
+
       return;
+
     }
 
+
     count++;
+
 
     const image =
       p.image ||
       "https://via.placeholder.com/300x180?text=ExportHub+India";
 
+
     box.innerHTML += `
 
-      <div class="card productCard"
-           data-key="${key}">
+      <div
+        class="card productCard"
+        data-key="${key}"
+      >
 
         <img
           src="${image}"
@@ -1595,7 +2479,9 @@ function renderProducts(snapshot, searchText = "") {
           "
         >
 
-        <h3>${name}</h3>
+        <h3>
+          ${name}
+        </h3>
 
         <p>
           💰 ${p.price || "Contact for price"}
@@ -1622,52 +2508,65 @@ function renderProducts(snapshot, searchText = "") {
           }
         </p>
 
+
         <button
           class="btn addCartBtn"
-          data-key="${key}">
+          data-key="${key}"
+        >
           🛒 Add to Cart
         </button>
 
+
         <button
           class="btn wishlistBtn"
-          data-key="${key}">
+          data-key="${key}"
+        >
           ❤️ Wishlist
         </button>
 
+
         <button
           class="btn buyNowBtn"
-          data-key="${key}">
+          data-key="${key}"
+        >
           💳 Buy Now
         </button>
 
+
         <button
           class="btn ratingBtn"
-          data-key="${key}">
+          data-key="${key}"
+        >
           ⭐ Rate Product
         </button>
 
+
         <button
           class="btn shareBtn"
-          data-key="${key}">
+          data-key="${key}"
+        >
           📤 Share Product
         </button>
+
 
         ${
           auth.currentUser &&
           p.sellerUid === auth.currentUser.uid
           ? `
 
-          <button
-            class="btn editBtn"
-            data-key="${key}">
-            ✏️ Edit
-          </button>
+            <button
+              class="btn editBtn"
+              data-key="${key}"
+            >
+              ✏️ Edit
+            </button>
 
-          <button
-            class="btn deleteBtn"
-            data-key="${key}">
-            🗑️ Delete
-          </button>
+            <button
+              class="btn deleteBtn"
+              data-key="${key}"
+            >
+              🗑️ Delete
+            </button>
 
           `
           : ""
@@ -1679,12 +2578,14 @@ function renderProducts(snapshot, searchText = "") {
 
   });
 
+
   if (count === 0) {
 
     box.innerHTML =
       "🔍 No products found.";
 
   }
+
 
   if ($("totalProducts")) {
 
@@ -1700,14 +2601,17 @@ function renderProducts(snapshot, searchText = "") {
 // REAL-TIME PRODUCT LIST
 // ================================
 
-onValue(productsRef, (snapshot) => {
+onValue(
+  productsRef,
+  (snapshot) => {
 
-  renderProducts(
-    snapshot,
-    $("searchBox")?.value.trim() || ""
-  );
+    renderProducts(
+      snapshot,
+      $("searchBox")?.value.trim() || ""
+    );
 
-});
+  }
+);
 
 
 // ================================
@@ -1732,7 +2636,10 @@ if ($("searchBox")) {
 
       } catch (error) {
 
-        alert("❌ Search Error: " + error.message);
+        alert(
+          "❌ Search Error: " +
+          error.message
+        );
 
       }
 
@@ -1746,19 +2653,32 @@ if ($("searchBox")) {
 // EDIT PRODUCT
 // ================================
 
-async function editProduct(productKey) {
+async function editProduct(
+  productKey
+) {
 
   const snapshot =
-    await get(ref(db, "products/" + productKey));
+    await get(
+      ref(
+        db,
+        "products/" + productKey
+      )
+    );
+
 
   if (!snapshot.exists()) {
 
-    alert("❌ Product not found.");
+    alert(
+      "❌ Product not found."
+    );
 
     return;
   }
 
-  const product = snapshot.val();
+
+  const product =
+    snapshot.val();
+
 
   const name =
     prompt(
@@ -1768,6 +2688,7 @@ async function editProduct(productKey) {
 
   if (name === null) return;
 
+
   const price =
     prompt(
       "Product Price:",
@@ -1775,6 +2696,7 @@ async function editProduct(productKey) {
     );
 
   if (price === null) return;
+
 
   const category =
     prompt(
@@ -1784,6 +2706,7 @@ async function editProduct(productKey) {
 
   if (category === null) return;
 
+
   const description =
     prompt(
       "Product Description:",
@@ -1792,10 +2715,14 @@ async function editProduct(productKey) {
 
   if (description === null) return;
 
+
   try {
 
     await update(
-      ref(db, "products/" + productKey),
+      ref(
+        db,
+        "products/" + productKey
+      ),
       {
         name: name,
         price: price,
@@ -1804,11 +2731,17 @@ async function editProduct(productKey) {
       }
     );
 
-    alert("✅ Product Updated Successfully!");
+
+    alert(
+      "✅ Product Updated Successfully!"
+    );
+
 
   } catch (error) {
 
-    alert("❌ " + error.message);
+    alert(
+      "❌ " + error.message
+    );
 
   }
 
@@ -1819,42 +2752,62 @@ async function editProduct(productKey) {
 // DELETE PRODUCT
 // ================================
 
-async function deleteProduct(productKey) {
+async function deleteProduct(
+  productKey
+) {
 
   if (
     !confirm(
       "⚠️ Kya aap ye product delete karna chahte ho?"
     )
   ) {
+
     return;
+
   }
+
 
   try {
 
     await remove(
-      ref(db, "products/" + productKey)
+      ref(
+        db,
+        "products/" + productKey
+      )
     );
 
-    alert("✅ Product Deleted Successfully!");
+
+    alert(
+      "✅ Product Deleted Successfully!"
+    );
+
 
   } catch (error) {
 
-    alert("❌ " + error.message);
+    alert(
+      "❌ " + error.message
+    );
 
   }
 
 }
 
 
-// Make functions available to buttons
+// ================================
+// MAKE FUNCTIONS AVAILABLE
+// ================================
 
-window.editProduct = editProduct;
+window.editProduct =
+  editProduct;
 
-window.deleteProduct = deleteProduct;
+window.deleteProduct =
+  deleteProduct;
 
 
-console.log("✅ Part 2 JavaScript Loaded");
-    // ================================
+console.log(
+  "✅ Part 2 JavaScript Loaded"
+);
+// ================================
 // CART
 // ================================
 
@@ -1868,7 +2821,8 @@ function renderCart() {
 
   if (cart.length === 0) {
 
-    box.innerHTML = "No products added yet.";
+    box.innerHTML =
+      "No products added yet.";
 
     updateCounts();
 
@@ -1881,13 +2835,20 @@ function renderCart() {
 
       <div class="card">
 
-        <h3>${item.name}</h3>
+        <h3>
+          ${item.name}
+        </h3>
 
-        <p>💰 ${item.price}</p>
+        <p>
+          💰 ${item.price}
+        </p>
 
-        <p>🏪 ${
-          item.sellerName || "Seller not available"
-        }</p>
+        <p>
+          🏪 ${
+            item.sellerName ||
+            "Seller not available"
+          }
+        </p>
 
         <button
           class="btn removeCartBtn"
@@ -1918,7 +2879,8 @@ function renderCart() {
 
 function renderWishlist() {
 
-  const box = $("wishlistItems");
+  const box =
+    $("wishlistItems");
 
   if (!box) return;
 
@@ -1926,40 +2888,47 @@ function renderWishlist() {
 
   if (wishlist.length === 0) {
 
-    box.innerHTML = "No wishlist items.";
+    box.innerHTML =
+      "No wishlist items.";
 
     updateCounts();
 
     return;
   }
 
-  wishlist.forEach((item, index) => {
+  wishlist.forEach(
+    (item, index) => {
 
-    box.innerHTML += `
+      box.innerHTML += `
 
-      <div class="card">
+        <div class="card">
 
-        <h3>${item.name}</h3>
+          <h3>
+            ${item.name}
+          </h3>
 
-        <p>💰 ${item.price}</p>
+          <p>
+            💰 ${item.price}
+          </p>
 
-        <button
-          class="btn removeWishlistBtn"
-          data-index="${index}">
-          ❌ Remove
-        </button>
+          <button
+            class="btn removeWishlistBtn"
+            data-index="${index}">
+            ❌ Remove
+          </button>
 
-        <button
-          class="btn wishlistBuyBtn"
-          data-index="${index}">
-          💳 Buy Now
-        </button>
+          <button
+            class="btn wishlistBuyBtn"
+            data-index="${index}">
+            💳 Buy Now
+          </button>
 
-      </div>
+        </div>
 
-    `;
+      `;
 
-  });
+    }
+  );
 
   updateCounts();
 
@@ -1970,369 +2939,174 @@ function renderWishlist() {
 // PRODUCT CLICK ACTIONS
 // ================================
 
-document.addEventListener("click", async (e) => {
+document.addEventListener(
+  "click",
+  async (e) => {
 
-  const button =
-    e.target.closest("button");
+    const button =
+      e.target.closest("button");
 
-  if (!button) return;
+    if (!button) return;
 
 
-  // ============================
-  // ADD TO CART
-  // ============================
+    // ============================
+    // ADD TO CART
+    // ============================
 
-  if (
-    button.classList.contains("addCartBtn")
-  ) {
+    if (
+      button.classList.contains(
+        "addCartBtn"
+      )
+    ) {
 
-    const key =
-      button.dataset.key;
+      const key =
+        button.dataset.key;
 
-    if (!key) return;
+      if (!key) return;
 
-    try {
+      try {
 
-      const snapshot =
-        await get(
-          ref(db, "products/" + key)
-        );
+        const snapshot =
+          await get(
+            ref(
+              db,
+              "products/" + key
+            )
+          );
 
-      if (!snapshot.exists()) {
+        if (!snapshot.exists()) {
 
-        alert("❌ Product not found.");
+          alert(
+            "❌ Product not found."
+          );
 
-        return;
-      }
+          return;
+        }
 
-      const p = snapshot.val();
+        const p =
+          snapshot.val();
 
-      const already =
-        cart.some(
-          item => item.key === key
-        );
+        const already =
+          cart.some(
+            item =>
+              item.key === key
+          );
 
-      if (already) {
+        if (already) {
+
+          alert(
+            "🛒 Product already Cart mein hai."
+          );
+
+          return;
+        }
+
+        cart.push({
+
+          key: key,
+
+          name:
+            p.name ||
+            "Product",
+
+          price:
+            p.price ||
+            "Contact for price",
+
+          category:
+            p.category ||
+            "",
+
+          description:
+            p.description ||
+            "",
+
+          image:
+            p.image ||
+            "",
+
+          sellerName:
+            p.sellerName ||
+            "",
+
+          sellerUid:
+            p.sellerUid ||
+            ""
+
+        });
+
+        saveLocalData();
+
+        renderCart();
 
         alert(
-          "🛒 Product already Cart mein hai."
+          "✅ Product Cart mein add ho gaya!"
         );
 
-        return;
+      } catch (error) {
+
+        alert(
+          "❌ " +
+          error.message
+        );
+
       }
 
-      cart.push({
+      return;
+    }
 
-        key: key,
 
-        name:
-          p.name || "Product",
+    // ============================
+    // REMOVE CART
+    // ============================
 
-        price:
-          p.price || "Contact for price",
+    if (
+      button.classList.contains(
+        "removeCartBtn"
+      )
+    ) {
 
-        category:
-          p.category || "",
+      const index =
+        Number(
+          button.dataset.index
+        );
 
-        description:
-          p.description || "",
-
-        image:
-          p.image || "",
-
-        sellerName:
-          p.sellerName || "",
-
-        sellerUid:
-          p.sellerUid || ""
-
-      });
+      cart.splice(index, 1);
 
       saveLocalData();
 
       renderCart();
 
       alert(
-        "✅ Product Cart mein add ho gaya!"
+        "❌ Product Cart se remove ho gaya."
       );
 
-    } catch (error) {
-
-      alert(
-        "❌ " + error.message
-      );
-
+      return;
     }
 
-    return;
-  }
 
+    // ============================
+    // CART BUY NOW
+    // ============================
 
-  // ============================
-  // REMOVE CART
-  // ============================
+    if (
+      button.classList.contains(
+        "cartBuyBtn"
+      )
+    ) {
 
-  if (
-    button.classList.contains(
-      "removeCartBtn"
-    )
-  ) {
-
-    const index =
-      Number(button.dataset.index);
-
-    cart.splice(index, 1);
-
-    saveLocalData();
-
-    renderCart();
-
-    alert(
-      "❌ Product Cart se remove ho gaya."
-    );
-
-    return;
-  }
-
-
-  // ============================
-  // CART BUY NOW
-  // ============================
-
-  if (
-    button.classList.contains(
-      "cartBuyBtn"
-    )
-  ) {
-
-    const index =
-      Number(button.dataset.index);
-
-    const item =
-      cart[index];
-
-    if (!item) return;
-
-    selectedProduct = item;
-
-    if ($("checkout")) {
-
-      $("checkout").scrollIntoView({
-        behavior: "smooth"
-      });
-
-    }
-
-    return;
-  }
-
-
-  // ============================
-  // ADD WISHLIST
-  // ============================
-
-  if (
-    button.classList.contains(
-      "wishlistBtn"
-    )
-  ) {
-
-    const key =
-      button.dataset.key;
-
-    if (!key) return;
-
-    try {
-
-      const snapshot =
-        await get(
-          ref(db, "products/" + key)
+      const index =
+        Number(
+          button.dataset.index
         );
 
-      if (!snapshot.exists()) {
+      const item =
+        cart[index];
 
-        alert(
-          "❌ Product not found."
-        );
+      if (!item) return;
 
-        return;
-      }
-
-      const p = snapshot.val();
-
-      const already =
-        wishlist.some(
-          item => item.key === key
-        );
-
-      if (already) {
-
-        alert(
-          "❤️ Product pehle se Wishlist mein hai."
-        );
-
-        return;
-      }
-
-      wishlist.push({
-
-        key: key,
-
-        name:
-          p.name || "Product",
-
-        price:
-          p.price || "Contact for price",
-
-        category:
-          p.category || "",
-
-        image:
-          p.image || "",
-
-        sellerName:
-          p.sellerName || ""
-
-      });
-
-      saveLocalData();
-
-      renderWishlist();
-
-      alert(
-        "❤️ Product Wishlist mein add ho gaya!"
-      );
-
-    } catch (error) {
-
-      alert(
-        "❌ " + error.message
-      );
-
-    }
-
-    return;
-  }
-
-
-  // ============================
-  // REMOVE WISHLIST
-  // ============================
-
-  if (
-    button.classList.contains(
-      "removeWishlistBtn"
-    )
-  ) {
-
-    const index =
-      Number(button.dataset.index);
-
-    wishlist.splice(index, 1);
-
-    saveLocalData();
-
-    renderWishlist();
-
-    alert(
-      "❌ Product Wishlist se remove ho gaya."
-    );
-
-    return;
-  }
-
-
-  // ============================
-  // WISHLIST BUY NOW
-  // ============================
-
-  if (
-    button.classList.contains(
-      "wishlistBuyBtn"
-    )
-  ) {
-
-    const index =
-      Number(button.dataset.index);
-
-    const item =
-      wishlist[index];
-
-    if (!item) return;
-
-    selectedProduct = item;
-
-    if ($("checkout")) {
-
-      $("checkout").scrollIntoView({
-        behavior: "smooth"
-      });
-
-    }
-
-    return;
-  }
-
-
-  // ============================
-  // BUY NOW
-  // ============================
-
-  if (
-    button.classList.contains(
-      "buyNowBtn"
-    )
-  ) {
-
-    const key =
-      button.dataset.key;
-
-    if (!key) return;
-
-    try {
-
-      const snapshot =
-        await get(
-          ref(db, "products/" + key)
-        );
-
-      if (!snapshot.exists()) {
-
-        alert(
-          "❌ Product not found."
-        );
-
-        return;
-      }
-
-      const p = snapshot.val();
-
-      selectedProduct = {
-
-        key: key,
-
-        name:
-          p.name || "Product",
-
-        price:
-          p.price || "Contact for price",
-
-        category:
-          p.category || "",
-
-        description:
-          p.description || "",
-
-        image:
-          p.image || "",
-
-        sellerName:
-          p.sellerName || "",
-
-        sellerUid:
-          p.sellerUid || ""
-
-      };
+      selectedProduct =
+        item;
 
       if ($("checkout")) {
 
@@ -2342,438 +3116,286 @@ document.addEventListener("click", async (e) => {
 
       }
 
-    } catch (error) {
-
-      alert(
-        "❌ " + error.message
-      );
-
+      return;
     }
 
-    return;
-  }
 
+    // ============================
+    // ADD WISHLIST
+    // ============================
 
-  // ============================
-  // SHARE PRODUCT
-  // ============================
+    if (
+      button.classList.contains(
+        "wishlistBtn"
+      )
+    ) {
 
-  if (
-    button.classList.contains(
-      "shareBtn"
-    )
-  ) {
+      const key =
+        button.dataset.key;
 
-    const key =
-      button.dataset.key;
+      if (!key) return;
 
-    if (!key) return;
+      try {
 
-    try {
-
-      const snapshot =
-        await get(
-          ref(db, "products/" + key)
-        );
-
-      if (!snapshot.exists()) return;
-
-      const p = snapshot.val();
-
-      const text =
-        "🌍 ExportHub India\n\n" +
-        "📦 Product: " +
-        (p.name || "") +
-        "\n💰 Price: " +
-        (p.price || "Contact for price") +
-        "\n📂 Category: " +
-        (p.category || "") +
-        "\n\nBuy from ExportHub India";
-
-      if (
-        navigator.share
-      ) {
-
-        try {
-
-          await navigator.share({
-            title:
-              "ExportHub India Product",
-            text: text
-          });
-
-        } catch (_) {}
-
-      } else {
-
-        try {
-
-          await navigator.clipboard.writeText(
-            text
+        const snapshot =
+          await get(
+            ref(
+              db,
+              "products/" + key
+            )
           );
+
+        if (!snapshot.exists()) {
 
           alert(
-            "✅ Product details copied."
+            "❌ Product not found."
           );
 
-        } catch (_) {
-
-          alert(text);
-
+          return;
         }
 
-      }
+        const p =
+          snapshot.val();
 
-    } catch (error) {
+        const already =
+          wishlist.some(
+            item =>
+              item.key === key
+          );
 
-      alert(
-        "❌ " + error.message
-      );
+        if (already) {
 
-    }
+          alert(
+            "❤️ Product pehle se Wishlist mein hai."
+          );
 
-    return;
-  }
-
-
-  // ============================
-  // RATE PRODUCT
-  // ============================
-
-  if (
-    button.classList.contains(
-      "ratingBtn"
-    )
-  ) {
-
-    if (!auth.currentUser) {
-
-      alert(
-        "⚠️ Rating dene ke liye Login karo."
-      );
-
-      return;
-    }
-
-    const key =
-      button.dataset.key;
-
-    if (!key) return;
-
-    const rating =
-      Number(
-        prompt(
-          "⭐ Rating 1 se 5 ke beech do:"
-        )
-      );
-
-    if (
-      !rating ||
-      rating < 1 ||
-      rating > 5
-    ) {
-
-      alert(
-        "⚠️ 1 se 5 ke beech rating do."
-      );
-
-      return;
-    }
-
-    try {
-
-      await push(
-        ref(db, "ratings/" + key),
-        {
-          user:
-            auth.currentUser.uid,
-
-          rating:
-            rating,
-
-          date:
-            new Date().toLocaleString()
+          return;
         }
-      );
 
-      await update(
-        ref(db, "products/" + key),
-        {
-          rating:
-            rating
-        }
-      );
+        wishlist.push({
 
-      alert(
-        "⭐ Rating Saved Successfully!"
-      );
+          key: key,
 
-    } catch (error) {
+          name:
+            p.name ||
+            "Product",
 
-      alert(
-        "❌ " + error.message
-      );
+          price:
+            p.price ||
+            "Contact for price",
 
-    }
+          category:
+            p.category ||
+            "",
 
-    return;
-  }
+          image:
+            p.image ||
+            "",
 
+          sellerName:
+            p.sellerName ||
+            "",
 
-  // ============================
-  // EDIT PRODUCT
-  // ============================
+          sellerUid:
+            p.sellerUid ||
+            ""
 
-  if (
-    button.classList.contains(
-      "editBtn"
-    )
-  ) {
+        });
 
-    const key =
-      button.dataset.key;
+        saveLocalData();
 
-    if (key) {
+        renderWishlist();
 
-      await editProduct(key);
-
-    }
-
-    return;
-  }
-
-
-  // ============================
-  // DELETE PRODUCT
-  // ============================
-
-  if (
-    button.classList.contains(
-      "deleteBtn"
-    )
-  ) {
-
-    const key =
-      button.dataset.key;
-
-    if (key) {
-
-      await deleteProduct(key);
-
-    }
-
-    return;
-  }
-
-});
-
-
-// ================================
-// PRODUCT DETAILS
-// ================================
-
-document.addEventListener(
-  "click",
-  async (e) => {
-
-    const card =
-      e.target.closest(
-        ".productCard"
-      );
-
-    if (!card) return;
-
-    if (
-      e.target.closest("button")
-    ) {
-      return;
-    }
-
-    const key =
-      card.dataset.key;
-
-    if (!key) return;
-
-    try {
-
-      const snapshot =
-        await get(
-          ref(db, "products/" + key)
+        alert(
+          "❤️ Product Wishlist mein add ho gaya!"
         );
 
-      if (!snapshot.exists()) return;
+      } catch (error) {
 
-      const p = snapshot.val();
-
-      if ($("detailImage")) {
-
-        $("detailImage").src =
-          p.image ||
-          "https://via.placeholder.com/300x180?text=ExportHub+India";
+        alert(
+          "❌ " +
+          error.message
+        );
 
       }
 
-      if ($("detailName")) {
+      return;
+    }
 
-        $("detailName").innerText =
-          p.name || "";
 
-      }
+    // ============================
+    // REMOVE WISHLIST
+    // ============================
 
-      if ($("detailPrice")) {
+    if (
+      button.classList.contains(
+        "removeWishlistBtn"
+      )
+    ) {
 
-        $("detailPrice").innerText =
-          "💰 " +
-          (p.price ||
-            "Contact for price");
+      const index =
+        Number(
+          button.dataset.index
+        );
 
-      }
+      wishlist.splice(index, 1);
 
-      if ($("detailCategory")) {
+      saveLocalData();
 
-        $("detailCategory").innerText =
-          "📂 " +
-          (p.category || "");
+      renderWishlist();
 
-      }
+      alert(
+        "❌ Product Wishlist se remove ho gaya."
+      );
 
-      if ($("detailDescription")) {
+      return;
+    }
 
-        $("detailDescription").innerText =
-          p.description || "";
 
-      }
+    // ============================
+    // WISHLIST BUY NOW
+    // ============================
 
-      selectedProduct = {
+    if (
+      button.classList.contains(
+        "wishlistBuyBtn"
+      )
+    ) {
 
-        key: key,
+      const index =
+        Number(
+          button.dataset.index
+        );
 
-        name:
-          p.name || "Product",
+      const item =
+        wishlist[index];
 
-        price:
-          p.price || "Contact for price",
+      if (!item) return;
 
-        category:
-          p.category || "",
+      selectedProduct =
+        item;
 
-        description:
-          p.description || "",
+      if ($("checkout")) {
 
-        image:
-          p.image || "",
-
-        sellerName:
-          p.sellerName || "",
-
-        sellerUid:
-          p.sellerUid || ""
-
-      };
-
-      if ($("product-details")) {
-
-        $("product-details").style.display =
-          "block";
-
-        $("product-details").scrollIntoView({
+        $("checkout").scrollIntoView({
           behavior: "smooth"
         });
 
       }
 
-    } catch (error) {
-
-      console.log(
-        "Product details error:",
-        error
-      );
-
+      return;
     }
 
-  }
-);
 
-
-// ================================
-// DETAIL PAGE ADD CART
-// ================================
-
-document.addEventListener(
-  "click",
-  (e) => {
+    // ============================
+    // BUY NOW
+    // ============================
 
     if (
-      !e.target.classList.contains(
-        "addCartBtn"
+      button.classList.contains(
+        "buyNowBtn"
       )
     ) {
+
+      const key =
+        button.dataset.key;
+
+      if (!key) return;
+
+      try {
+
+        const snapshot =
+          await get(
+            ref(
+              db,
+              "products/" + key
+            )
+          );
+
+        if (!snapshot.exists()) {
+
+          alert(
+            "❌ Product not found."
+          );
+
+          return;
+        }
+
+        const p =
+          snapshot.val();
+
+        selectedProduct = {
+
+          key: key,
+
+          name:
+            p.name ||
+            "Product",
+
+          price:
+            p.price ||
+            "Contact for price",
+
+          category:
+            p.category ||
+            "",
+
+          description:
+            p.description ||
+            "",
+
+          image:
+            p.image ||
+            "",
+
+          sellerName:
+            p.sellerName ||
+            "",
+
+          sellerUid:
+            p.sellerUid ||
+            ""
+
+        };
+
+
+        if ($("checkout")) {
+
+          $("checkout").scrollIntoView({
+            behavior: "smooth"
+          });
+
+        }
+
+      } catch (error) {
+
+        alert(
+          "❌ " +
+          error.message
+        );
+
+      }
+
       return;
     }
 
-    // Dynamic product buttons are handled above.
-    // Detail-page button has no data-key.
+
+    // ============================
+    // SHARE PRODUCT
+    // ============================
 
     if (
-      e.target.dataset.key
+      button.classList.contains(
+        "shareBtn"
+      )
     ) {
-      return;
-    }
 
-    if (!selectedProduct) {
+      const key =
+        button.dataset.key;
 
-      alert(
-        "⚠️ Pehle product select karo."
-      );
+      if (!key) return;
 
-      return;
-    }
-
-    const exists =
-      cart.some(
-        item =>
-          item.key ===
-          selectedProduct.key
-      );
-
-    if (exists) {
-
-      alert(
-        "🛒 Product already Cart mein hai."
-      );
-
-      return;
-    }
-
-    cart.push(
-      selectedProduct
-    );
-
-    saveLocalData();
-
-    renderCart();
-
-    alert(
-      "✅ Product Cart mein add ho gaya!"
-    );
-
-  }
-);
-
-
-// ================================
-// INITIAL LOCAL DATA
-// ================================
-
-renderCart();
-
-renderWishlist();
-
-updateCounts();
-
-
-console.log("✅ Part 3 JavaScript Loaded");
-    // ================================
+     // ================================
 // CHECKOUT / PLACE ORDER
 // ================================
 
@@ -2801,6 +3423,7 @@ if ($("placeOrderBtn")) {
       const address =
         $("checkoutAddress").value.trim();
 
+
       if (!name || !mobile || !address) {
 
         alert(
@@ -2810,7 +3433,11 @@ if ($("placeOrderBtn")) {
         return;
       }
 
-      if (!selectedProduct && cart.length === 0) {
+
+      if (
+        !selectedProduct &&
+        cart.length === 0
+      ) {
 
         alert(
           "⚠️ Pehle koi product select karo."
@@ -2819,8 +3446,11 @@ if ($("placeOrderBtn")) {
         return;
       }
 
+
       const product =
-        selectedProduct || cart[0];
+        selectedProduct ||
+        cart[0];
+
 
       const order = {
 
@@ -2846,7 +3476,8 @@ if ($("placeOrderBtn")) {
           product.name || "Product",
 
         productPrice:
-          product.price || "Contact for price",
+          product.price ||
+          "Contact for price",
 
         seller:
           product.sellerName || "",
@@ -2862,6 +3493,7 @@ if ($("placeOrderBtn")) {
 
       };
 
+
       try {
 
         await push(
@@ -2869,15 +3501,24 @@ if ($("placeOrderBtn")) {
           order
         );
 
+
         alert(
           "✅ Order Placed Successfully!"
         );
 
-        $("checkoutName").value = "";
-        $("checkoutMobile").value = "";
-        $("checkoutAddress").value = "";
+
+        $("checkoutName").value =
+          "";
+
+        $("checkoutMobile").value =
+          "";
+
+        $("checkoutAddress").value =
+          "";
+
 
         selectedProduct = null;
+
 
       } catch (error) {
 
@@ -2922,6 +3563,7 @@ if ($("sendEnquiryBtn")) {
       const message =
         $("buyerMessage").value.trim();
 
+
       if (
         !name ||
         !email ||
@@ -2937,10 +3579,14 @@ if ($("sendEnquiryBtn")) {
         return;
       }
 
+
       try {
 
         await push(
-          ref(db, "buyerEnquiries"),
+          ref(
+            db,
+            "buyerEnquiries"
+          ),
           {
 
             name:
@@ -2970,21 +3616,36 @@ if ($("sendEnquiryBtn")) {
           }
         );
 
+
         alert(
           "✅ Buyer Requirement Sent Successfully!"
         );
 
-        $("buyerName").value = "";
-        $("buyerEmail").value = "";
-        $("buyerMobile").value = "";
-        $("buyerProduct").value = "";
-        $("buyerQuantity").value = "";
-        $("buyerMessage").value = "";
+
+        $("buyerName").value =
+          "";
+
+        $("buyerEmail").value =
+          "";
+
+        $("buyerMobile").value =
+          "";
+
+        $("buyerProduct").value =
+          "";
+
+        $("buyerQuantity").value =
+          "";
+
+        $("buyerMessage").value =
+          "";
+
 
       } catch (error) {
 
         alert(
-          "❌ " + error.message
+          "❌ " +
+          error.message
         );
 
       }
@@ -3035,6 +3696,7 @@ if ($("joinSupplierBtn")) {
       const description =
         $("supplierDescription").value.trim();
 
+
       if (
         !name ||
         !mobile ||
@@ -3049,10 +3711,14 @@ if ($("joinSupplierBtn")) {
         return;
       }
 
+
       try {
 
         await push(
-          ref(db, "suppliers"),
+          ref(
+            db,
+            "suppliers"
+          ),
           {
 
             name:
@@ -3094,25 +3760,48 @@ if ($("joinSupplierBtn")) {
           }
         );
 
+
         alert(
           "✅ Supplier Registration Successfully Sent!"
         );
 
-        $("supplierName").value = "";
-        $("supplierCompany").value = "";
-        $("supplierMobile").value = "";
-        $("supplierEmail").value = "";
-        $("supplierLocation").value = "";
-        $("supplierProduct").value = "";
-        $("supplierPrice").value = "";
-        $("supplierMinQty").value = "";
-        $("supplierSupply").value = "";
-        $("supplierDescription").value = "";
+
+        $("supplierName").value =
+          "";
+
+        $("supplierCompany").value =
+          "";
+
+        $("supplierMobile").value =
+          "";
+
+        $("supplierEmail").value =
+          "";
+
+        $("supplierLocation").value =
+          "";
+
+        $("supplierProduct").value =
+          "";
+
+        $("supplierPrice").value =
+          "";
+
+        $("supplierMinQty").value =
+          "";
+
+        $("supplierSupply").value =
+          "";
+
+        $("supplierDescription").value =
+          "";
+
 
       } catch (error) {
 
         alert(
-          "❌ " + error.message
+          "❌ " +
+          error.message
         );
 
       }
@@ -3123,347 +3812,395 @@ if ($("joinSupplierBtn")) {
 }
 
 
-// ================================
-// BUYER ORDERS
-// ================================
-
-const ordersRef =
-  ref(db, "orders");
-
-
-onValue(
-  ordersRef,
-  (snapshot) => {
-
-    const ordersBox =
-      $("ordersList");
-
-    const sellerBox =
-      $("sellerOrdersList");
-
-    if (ordersBox) {
-
-      ordersBox.innerHTML = "";
-
-    }
-
-    if (sellerBox) {
-
-      sellerBox.innerHTML = "";
-
-    }
-
-    let buyerFound = false;
-
-    let sellerFound = false;
-
-    let totalOrders = 0;
-
-    snapshot.forEach(
-      (child) => {
-
-        totalOrders++;
-
-        const key =
-          child.key;
-
-        const order =
-          child.val();
-
-
-        // ========================
-        // BUYER ORDERS
-        // ========================
-
-        if (
-          auth.currentUser &&
-          order.user ===
-            auth.currentUser.email
-        ) {
-
-          buyerFound = true;
-
-          if (ordersBox) {
-
-            ordersBox.innerHTML += `
-
-              <div class="card">
-
-                <h3>
-                  📦 ${order.productName || "Product"}
-                </h3>
-
-                <p>
-                  💰 ${
-                    order.productPrice ||
-                    "Contact for price"
-                  }
-                </p>
-
-                <p>
-                  👤 ${order.name || ""}
-                </p>
-
-                <p>
-                  📱 ${order.mobile || ""}
-                </p>
-
-                <p>
-                  📍 ${order.address || ""}
-                </p>
-
-                <p>
-                  🕒 ${order.date || ""}
-                </p>
-
-                <p>
-                  📦 Status:
-                  <strong>
-                    ${order.status || "Pending"}
-                  </strong>
-                </p>
-
-              </div>
-
-            `;
-
-          }
-
-        }
-
-
-        // ========================
-        // SELLER ORDERS
-        // ========================
-
-        if (
-          auth.currentUser &&
-          order.sellerUid ===
-            auth.currentUser.uid
-        ) {
-
-          sellerFound = true;
-
-          if (sellerBox) {
-
-            sellerBox.innerHTML += `
-
-              <div class="card">
-
-                <h3>
-                  🛒 ${
-                    order.productName ||
-                    "Product"
-                  }
-                </h3>
-
-                <p>
-                  👤 Buyer:
-                  ${order.name || ""}
-                </p>
-
-                <p>
-                  📱 ${order.mobile || ""}
-                </p>
-
-                <p>
-                  📍 ${order.address || ""}
-                </p>
-
-                <p>
-                  💰 ${
-                    order.productPrice ||
-                    "Contact for price"
-                  }
-                </p>
-
-                <p>
-                  🕒 ${order.date || ""}
-                </p>
-
-                <p>
-                  📦 Status:
-                  <strong>
-                    ${order.status || "Pending"}
-                  </strong>
-                </p>
-
-                <button
-                  class="btn orderStatusBtn"
-                  data-key="${key}"
-                  data-status="Accepted">
-                  ✅ Accept
-                </button>
-
-                <button
-                  class="btn orderStatusBtn"
-                  data-key="${key}"
-                  data-status="Rejected">
-                  ❌ Reject
-                </button>
-
-              </div>
-
-            `;
-
-          }
-
-        }
-
-      }
-    );
-
-
-    if (
-      ordersBox &&
-      !buyerFound
-    ) {
-
-      ordersBox.innerHTML =
-        "No Orders Yet.";
-
-    }
-
-    if (
-      sellerBox &&
-      !sellerFound
-    ) {
-
-      sellerBox.innerHTML =
-        "No Orders Yet.";
-
-    }
-
-    if ($("totalOrders")) {
-
-      $("totalOrders").innerText =
-        totalOrders;
-
-    }
-
-  }
+console.log(
+  "✅ Part 4 JavaScript Loaded"
 );
-
-
 // ================================
-// ACCEPT / REJECT ORDER
+// CHECKOUT / PLACE ORDER
 // ================================
 
-document.addEventListener(
-  "click",
-  async (e) => {
+if ($("placeOrderBtn")) {
 
-    const button =
-      e.target.closest(
-        ".orderStatusBtn"
-      );
+  $("placeOrderBtn").addEventListener("click", async () => {
 
-    if (!button) return;
+    if (!auth.currentUser) {
+      alert("⚠️ Order place karne ke liye Login karo.");
+      return;
+    }
 
-    const key =
-      button.dataset.key;
+    const name = $("checkoutName")?.value.trim();
+    const mobile = $("checkoutMobile")?.value.trim();
+    const address = $("checkoutAddress")?.value.trim();
 
-    const status =
-      button.dataset.status;
+    if (!name || !mobile || !address) {
+      alert("⚠️ Name, Mobile aur Address bharna zaroori hai.");
+      return;
+    }
 
-    if (!key || !status) return;
+    if (!selectedProduct && cart.length === 0) {
+      alert("⚠️ Pehle koi product select karo.");
+      return;
+    }
+
+    const product = selectedProduct || cart[0];
+
+    const order = {
+
+      user: auth.currentUser.email,
+
+      userUid: auth.currentUser.uid,
+
+      name: name,
+
+      mobile: mobile,
+
+      address: address,
+
+      productKey: product.key || "",
+
+      productName: product.name || "Product",
+
+      productPrice:
+        product.price || "Contact for price",
+
+      seller: product.sellerName || "",
+
+      sellerUid: product.sellerUid || "",
+
+      date: new Date().toLocaleString(),
+
+      status: "Pending"
+
+    };
 
     try {
 
-      await update(
-        ref(db, "orders/" + key),
-        {
-          status:
-            status
-        }
+      await push(
+        ref(db, "orders"),
+        order
       );
 
-      alert(
-        "✅ Order " +
-        status
-      );
+      alert("✅ Order Placed Successfully!");
+
+      $("checkoutName").value = "";
+      $("checkoutMobile").value = "";
+      $("checkoutAddress").value = "";
+
+      selectedProduct = null;
 
     } catch (error) {
 
-      alert(
-        "❌ " +
-        error.message
-      );
+      alert("❌ Order Error: " + error.message);
 
     }
 
-  }
-);
+  });
+
+}
 
 
 // ================================
-// ADMIN PRODUCTS
+// BUYER ENQUIRY
 // ================================
 
-onValue(
-  productsRef,
-  (snapshot) => {
+if ($("sendEnquiryBtn")) {
 
-    const adminBox =
-      $("adminProducts");
+  $("sendEnquiryBtn").addEventListener("click", async () => {
 
-    if (!adminBox) return;
+    const name = $("buyerName")?.value.trim();
+    const email = $("buyerEmail")?.value.trim();
+    const mobile = $("buyerMobile")?.value.trim();
+    const product = $("buyerProduct")?.value.trim();
+    const quantity = $("buyerQuantity")?.value.trim();
+    const message = $("buyerMessage")?.value.trim();
 
-    adminBox.innerHTML = "";
+    if (
+      !name ||
+      !email ||
+      !mobile ||
+      !product ||
+      !quantity
+    ) {
 
-    if (!snapshot.exists()) {
-
-      adminBox.innerHTML =
-        "No Products Yet.";
+      alert(
+        "⚠️ Name, Email, Mobile, Product aur Quantity bharna zaroori hai."
+      );
 
       return;
     }
 
-    snapshot.forEach(
-      (child) => {
+    try {
 
-        const key =
-          child.key;
+      await push(
+        ref(db, "buyerEnquiries"),
+        {
 
-        const p =
-          child.val();
+          name: name,
 
-        adminBox.innerHTML += `
+          email: email,
+
+          mobile: mobile,
+
+          product: product,
+
+          quantity: quantity,
+
+          message: message,
+
+          date: new Date().toLocaleString(),
+
+          status: "New"
+
+        }
+      );
+
+      alert(
+        "✅ Buyer Requirement Sent Successfully!"
+      );
+
+      $("buyerName").value = "";
+      $("buyerEmail").value = "";
+      $("buyerMobile").value = "";
+      $("buyerProduct").value = "";
+      $("buyerQuantity").value = "";
+      $("buyerMessage").value = "";
+
+    } catch (error) {
+
+      alert("❌ " + error.message);
+
+    }
+
+  });
+
+}
+
+
+// ================================
+// SUPPLIER REGISTRATION
+// ================================
+
+if ($("joinSupplierBtn")) {
+
+  $("joinSupplierBtn").addEventListener("click", async () => {
+
+    const name = $("supplierName")?.value.trim();
+    const company = $("supplierCompany")?.value.trim();
+    const mobile = $("supplierMobile")?.value.trim();
+    const email = $("supplierEmail")?.value.trim();
+    const location = $("supplierLocation")?.value.trim();
+    const product = $("supplierProduct")?.value.trim();
+    const price = $("supplierPrice")?.value.trim();
+    const minQty = $("supplierMinQty")?.value.trim();
+    const supply = $("supplierSupply")?.value;
+    const description =
+      $("supplierDescription")?.value.trim();
+
+    if (!name || !mobile || !product || !location) {
+
+      alert(
+        "⚠️ Name, Mobile, Product aur Location bharna zaroori hai."
+      );
+
+      return;
+    }
+
+    try {
+
+      await push(
+        ref(db, "suppliers"),
+        {
+
+          name: name,
+
+          company: company,
+
+          mobile: mobile,
+
+          email: email,
+
+          location: location,
+
+          product: product,
+
+          price: price,
+
+          minQty: minQty,
+
+          supply: supply,
+
+          description: description,
+
+          date: new Date().toLocaleString(),
+
+          status: "New"
+
+        }
+      );
+
+      alert(
+        "✅ Supplier Registration Successfully Sent!"
+      );
+
+      $("supplierName").value = "";
+      $("supplierCompany").value = "";
+      $("supplierMobile").value = "";
+      $("supplierEmail").value = "";
+      $("supplierLocation").value = "";
+      $("supplierProduct").value = "";
+      $("supplierPrice").value = "";
+      $("supplierMinQty").value = "";
+      $("supplierSupply").value = "";
+      $("supplierDescription").value = "";
+
+    } catch (error) {
+
+      alert("❌ " + error.message);
+
+    }
+
+  });
+
+}
+
+
+// ================================
+// ORDERS
+// ================================
+
+const ordersRef = ref(db, "orders");
+
+onValue(ordersRef, (snapshot) => {
+
+  const ordersBox = $("ordersList");
+  const sellerBox = $("sellerOrdersList");
+
+  if (ordersBox) ordersBox.innerHTML = "";
+  if (sellerBox) sellerBox.innerHTML = "";
+
+  let buyerFound = false;
+  let sellerFound = false;
+  let totalOrders = 0;
+
+  snapshot.forEach((child) => {
+
+    totalOrders++;
+
+    const key = child.key;
+    const order = child.val();
+
+    // BUYER ORDERS
+
+    if (
+      auth.currentUser &&
+      order.userUid === auth.currentUser.uid
+    ) {
+
+      buyerFound = true;
+
+      if (ordersBox) {
+
+        ordersBox.innerHTML += `
 
           <div class="card">
 
             <h3>
-              ${p.name || "Product"}
+              📦 ${order.productName || "Product"}
             </h3>
 
             <p>
               💰 ${
-                p.price ||
+                order.productPrice ||
+                "Contact for price"
+              }
+            </p>
+
+            <p>👤 ${order.name || ""}</p>
+
+            <p>📱 ${order.mobile || ""}</p>
+
+            <p>📍 ${order.address || ""}</p>
+
+            <p>🕒 ${order.date || ""}</p>
+
+            <p>
+              📦 Status:
+              <strong>
+                ${order.status || "Pending"}
+              </strong>
+            </p>
+
+          </div>
+
+        `;
+
+      }
+
+    }
+
+
+    // SELLER ORDERS
+
+    if (
+      auth.currentUser &&
+      order.sellerUid === auth.currentUser.uid
+    ) {
+
+      sellerFound = true;
+
+      if (sellerBox) {
+
+        sellerBox.innerHTML += `
+
+          <div class="card">
+
+            <h3>
+              🛒 ${order.productName || "Product"}
+            </h3>
+
+            <p>
+              👤 Buyer:
+              ${order.name || ""}
+            </p>
+
+            <p>
+              📱 ${order.mobile || ""}
+            </p>
+
+            <p>
+              📍 ${order.address || ""}
+            </p>
+
+            <p>
+              💰 ${
+                order.productPrice ||
                 "Contact for price"
               }
             </p>
 
             <p>
-              📂 ${p.category || ""}
+              🕒 ${order.date || ""}
             </p>
 
             <p>
-              🏪 ${
-                p.sellerName ||
-                "Not Available"
-              }
+              📦 Status:
+              <strong>
+                ${order.status || "Pending"}
+              </strong>
             </p>
 
             <button
-              class="btn editBtn"
-              data-key="${key}">
-              ✏️ Edit Product
+              class="btn orderStatusBtn"
+              data-key="${key}"
+              data-status="Accepted">
+              ✅ Accept
             </button>
 
             <button
-              class="btn deleteBtn"
-              data-key="${key}">
-              🗑️ Delete Product
+              class="btn orderStatusBtn"
+              data-key="${key}"
+              data-status="Rejected">
+              ❌ Reject
             </button>
 
           </div>
@@ -3471,10 +4208,127 @@ onValue(
         `;
 
       }
+
+    }
+
+  });
+
+  if (ordersBox && !buyerFound) {
+    ordersBox.innerHTML = "No Orders Yet.";
+  }
+
+  if (sellerBox && !sellerFound) {
+    sellerBox.innerHTML = "No Orders Yet.";
+  }
+
+  if ($("totalOrders")) {
+    $("totalOrders").innerText = totalOrders;
+  }
+
+});
+
+
+// ================================
+// ACCEPT / REJECT ORDER
+// ================================
+
+document.addEventListener("click", async (e) => {
+
+  const button =
+    e.target.closest(".orderStatusBtn");
+
+  if (!button) return;
+
+  const key = button.dataset.key;
+  const status = button.dataset.status;
+
+  if (!key || !status) return;
+
+  try {
+
+    await update(
+      ref(db, "orders/" + key),
+      {
+        status: status
+      }
     );
 
+    alert("✅ Order " + status);
+
+  } catch (error) {
+
+    alert("❌ " + error.message);
+
   }
-);
+
+});
+
+
+// ================================
+// ADMIN PRODUCTS
+// ================================
+
+onValue(productsRef, (snapshot) => {
+
+  const adminBox = $("adminProducts");
+
+  if (!adminBox) return;
+
+  adminBox.innerHTML = "";
+
+  if (!snapshot.exists()) {
+
+    adminBox.innerHTML = "No Products Yet.";
+
+    return;
+  }
+
+  snapshot.forEach((child) => {
+
+    const key = child.key;
+    const p = child.val();
+
+    adminBox.innerHTML += `
+
+      <div class="card">
+
+        <h3>${p.name || "Product"}</h3>
+
+        <p>
+          💰 ${
+            p.price ||
+            "Contact for price"
+          }
+        </p>
+
+        <p>📂 ${p.category || ""}</p>
+
+        <p>
+          🏪 ${
+            p.sellerName ||
+            "Not Available"
+          }
+        </p>
+
+        <button
+          class="btn editBtn"
+          data-key="${key}">
+          ✏️ Edit Product
+        </button>
+
+        <button
+          class="btn deleteBtn"
+          data-key="${key}">
+          🗑️ Delete Product
+        </button>
+
+      </div>
+
+    `;
+
+  });
+
+});
 
 
 // ================================
@@ -3485,8 +4339,7 @@ onValue(
   ref(db, "buyerEnquiries"),
   (snapshot) => {
 
-    const box =
-      $("buyerEnquiriesList");
+    const box = $("buyerEnquiriesList");
 
     if (!box) return;
 
@@ -3500,94 +4353,74 @@ onValue(
       return;
     }
 
-    snapshot.forEach(
-      (child) => {
+    snapshot.forEach((child) => {
 
-        const enquiry =
-          child.val();
+      const enquiry = child.val();
 
-        const mobile =
-          String(
-            enquiry.mobile || ""
-          ).replace(
-            /\D/g,
-            ""
-          );
+      const mobile =
+        String(enquiry.mobile || "")
+          .replace(/\D/g, "");
 
-        const message =
-          encodeURIComponent(
-            "Hello " +
-            (enquiry.name || "Buyer") +
-            ", I am from ExportHub India. Regarding your requirement for " +
-            (enquiry.product || "") +
-            " (" +
-            (enquiry.quantity || "") +
-            ")."
-          );
+      const message =
+        encodeURIComponent(
+          "Hello " +
+          (enquiry.name || "Buyer") +
+          ", I am from ExportHub India. Regarding your requirement for " +
+          (enquiry.product || "") +
+          " (" +
+          (enquiry.quantity || "") +
+          ")."
+        );
 
-        box.innerHTML += `
+      box.innerHTML += `
 
-          <div class="card">
+        <div class="card">
 
-            <h3>
-              📦 ${
-                enquiry.product ||
-                "Product"
-              }
-            </h3>
+          <h3>
+            📦 ${
+              enquiry.product ||
+              "Product"
+            }
+          </h3>
 
-            <p>
-              👤 Buyer:
-              ${enquiry.name || ""}
-            </p>
+          <p>
+            👤 Buyer:
+            ${enquiry.name || ""}
+          </p>
 
-            <p>
-              📧 ${
-                enquiry.email || ""
-              }
-            </p>
+          <p>
+            📧 ${enquiry.email || ""}
+          </p>
 
-            <p>
-              📱 ${
-                enquiry.mobile || ""
-              }
-            </p>
+          <p>
+            📱 ${enquiry.mobile || ""}
+          </p>
 
-            <p>
-              📦 Quantity:
-              ${
-                enquiry.quantity ||
-                ""
-              }
-            </p>
+          <p>
+            📦 Quantity:
+            ${enquiry.quantity || ""}
+          </p>
 
-            <p>
-              📝 ${
-                enquiry.message ||
-                ""
-              }
-            </p>
+          <p>
+            📝 ${enquiry.message || ""}
+          </p>
 
-            <p>
-              🕒 ${
-                enquiry.date ||
-                ""
-              }
-            </p>
+          <p>
+            🕒 ${enquiry.date || ""}
+          </p>
 
-            <a
-              class="btn"
-              target="_blank"
-              href="https://wa.me/91${mobile}?text=${message}">
-              📲 Contact Buyer
-            </a>
+          <a
+            class="btn"
+            target="_blank"
+            href="https://wa.me/91${mobile}?text=${message}">
+            📲 Contact Buyer
+          </a>
 
-          </div>
+        </div>
 
-        `;
+      `;
 
-      }
-    );
+    });
 
   }
 );
@@ -3597,119 +4430,53 @@ onValue(
 // MY PRODUCTS
 // ================================
 
-onValue(
-  productsRef,
-  (snapshot) => {
+onValue(productsRef, (snapshot) => {
 
-    const box =
-      $("myProductsList");
+  const box = $("myProductsList");
 
-    if (!box) return;
+  if (!box) return;
 
-    box.innerHTML = "";
+  box.innerHTML = "";
 
-    let count = 0;
+  let count = 0;
 
-    snapshot.forEach(
-      (child) => {
+  snapshot.forEach((child) => {
 
-        const key =
-          child.key;
+    const key = child.key;
+    const p = child.val();
 
-        const p =
-          child.val();
+    if (
+      auth.currentUser &&
+      p.sellerUid === auth.currentUser.uid
+    ) {
 
-        if (
-          auth.currentUser &&
-          p.sellerUid ===
-            auth.currentUser.uid
-        ) {
+      count++;
 
-          count++;
+      box.innerHTML += `
 
-          box.innerHTML += `
+        <div class="card">
 
-            <div class="card">
+          <h3>${p.name || "Product"}</h3>
 
-              <h3>
-                ${p.name || "Product"}
-              </h3>
+          <p>
+            💰 ${
+              p.price ||
+              "Contact for price"
+            }
+          </p>
 
-              <p>
-                💰 ${
-                  p.price ||
-                  "Contact for price"
-                }
-              </p>
+          <p>
+            📂 ${p.category || ""}
+          </p>
 
-              <p>
-                📂 ${
-                  p.category ||
-                  ""
-                }
-              </p>
+          <button
+            class="btn editBtn"
+            data-key="${key}">
+            ✏️ Edit
+          </button>
 
-              <button
-                class="btn editBtn"
-                data-key="${key}">
-                ✏️ Edit
-              </button>
-
-              <button
-                class="btn deleteBtn"
-                data-key="${key}">
-                🗑️ Delete
-              </button>
-
-            </div>
-
-          `;
-
-        }
-
-      }
-    );
-
-    if (count === 0) {
-
-      box.innerHTML =
-        "No Products Uploaded Yet.";
-
-    }
-
-    if ($("myProducts")) {
-
-      $("myProducts").innerText =
-        count;
-
-    }
-
-  }
-);
-
-
-// ================================
-// RESTORE CART / WISHLIST
-// ================================
-
-renderCart();
-
-renderWishlist();
-
-updateCounts();
-
-
-// ================================
-// FINAL MESSAGE
-// ================================
-
-console.log(
-  "🎉 ExportHub India JavaScript Loaded Successfully!"
-);
-
-alert(
-  "✅ ExportHub India App Ready!"
-);
+          <button
+            class="btn deleteBtn"
 </script>
 </body>
 </html>
