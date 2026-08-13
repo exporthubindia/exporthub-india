@@ -4475,9 +4475,51 @@ onValue(productsRef, (snapshot) => {
             ✏️ Edit
           </button>
 
-          <button
-            class="btn deleteBtn"
-  alert("✅ Part 5 Successfully Loaded!");
+            <button
+          class="btn deleteBtn"
+          data-key="${key}">
+          🗑️ Delete
+        </button>
+
+      </div>
+
+    `;
+
+    }
+
+  });
+
+  if (count === 0) {
+
+    box.innerHTML =
+      "No Products Uploaded Yet.";
+
+  }
+
+  if ($("myProducts")) {
+
+    $("myProducts").innerText =
+      count;
+
+  }
+
+});
+
+
+// ========================================
+// FINAL COUNTS
+// ========================================
+
+updateCounts();
+
+
+// ========================================
+// PART 5 TEST
+// ========================================
+
+console.log("✅ Part 5 Loaded Successfully!");
+
+alert("✅ Part 5 Successfully Loaded!");
 </script>
 </body>
 </html>
