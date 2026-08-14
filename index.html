@@ -2274,14 +2274,55 @@ async function addProductToCart(key) {
     }
 
 
-    const p =
- 
-<script>
-document.body.insertAdjacentHTML(
-  "afterbegin",
-  "<h1 style='background:red;color:white;padding:20px'>JAVASCRIPT TEST</h1>"
-);
-</script>
+  const p = snap.val();
 
+if (!p) {
+
+  alert("❌ Product data nahi mila.");
+
+  return;
+
+}
+
+cart.push({
+
+  key: key,
+
+  name: p.name || "Product",
+
+  price: p.price || "Contact for price",
+
+  category: p.category || "",
+
+  description: p.description || "",
+
+  image: p.image || "",
+
+  sellerName: p.sellerName || "",
+
+  sellerUid: p.sellerUid || ""
+
+});
+
+saveLocalData();
+
+renderCart();
+
+alert("✅ Product Cart mein add ho gaya!");
+
+  } catch (error) {
+
+    console.log(
+      "Add cart error:",
+      error
+    );
+
+    alert(
+      "❌ " + error.message
+    );
+
+  }
+
+}</script>
 </body>
 </html>
