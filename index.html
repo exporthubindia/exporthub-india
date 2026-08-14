@@ -930,7 +930,14 @@ onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})
 </footer>
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+// =====================================================
+// EXPORTHUB INDIA - COMPLETE JAVASCRIPT
+// =====================================================
+
+// ================= FIREBASE IMPORTS ===================
+
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
 import {
   getAuth,
@@ -941,7 +948,8 @@ import {
   setPersistence,
   browserLocalPersistence,
   signOut
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+} from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 import {
   getDatabase,
@@ -952,85 +960,93 @@ import {
   get,
   remove,
   update
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+} from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
 
-// ========================================
-// FIREBASE
-// ========================================
+// ================= FIREBASE CONFIG ====================
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDK8hxBdK7SNUY6qHqvtKsg9FB4IotvWYA",
-  authDomain: "exporthub-india-87d31.firebaseapp.com",
-  databaseURL: "https://exporthub-india-87d31-default-rtdb.firebaseio.com",
-  projectId: "exporthub-india-87d31",
-  storageBucket: "exporthub-india-87d31.appspot.com",
-  messagingSenderId: "60863572079",
-  appId: "1:60863572079:web:9c4146979ab138fb72c59a"
+
+  apiKey:
+    "AIzaSyDK8hxBdK7SNUY6qHqvtKsg9FB4IotvWYA",
+
+  authDomain:
+    "exporthub-india-87d31.firebaseapp.com",
+
+  databaseURL:
+    "https://exporthub-india-87d31-default-rtdb.firebaseio.com",
+
+  projectId:
+    "exporthub-india-87d31",
+
+  storageBucket:
+    "exporthub-india-87d31.appspot.com",
+
+  messagingSenderId:
+    "60863572079",
+
+  appId:
+    "1:60863572079:web:9c4146979ab138fb72c59a"
 };
 
+
+// ================= INITIALIZE ==========================
+
 const app = initializeApp(firebaseConfig);
-alert("✅ JavaScript aur Firebase START ho gaya!");
+
 const auth = getAuth(app);
+
+await setPersistence(
+  auth,
+  browserLocalPersistence
+);
 
 const db = getDatabase(app);
 
-const productsRef = ref(db, "products");
+const productsRef =
+  ref(db, "products");
 
 
-// ========================================
-// AUTH PERSISTENCE
-// ========================================
-
-setPersistence(
-  auth,
-  browserLocalPersistence
-).catch(error => {
-  console.log("Persistence error:", error);
-});
-
-
-// ========================================
-// GLOBAL VARIABLES
-// ========================================
+// ================= GLOBAL VARIABLES ===================
 
 let selectedProduct = null;
 
 let cart =
-  JSON.parse(localStorage.getItem("cart") || "[]");
+  JSON.parse(
+    localStorage.getItem("cart") || "[]"
+  );
 
 let wishlist =
-  JSON.parse(localStorage.getItem("wishlist") || "[]");
+  JSON.parse(
+    localStorage.getItem("wishlist") || "[]"
+  );
 
 
-// ========================================
-// SHORT ID
-// ========================================
+// ================= SHORT ID ============================
 
 function $(id) {
+
   return document.getElementById(id);
+
 }
 
 
-// ========================================
-// HTML SAFE TEXT
-// ========================================
+// ================= ESCAPE HTML ========================
 
-function safe(value) {
+function escapeHTML(value) {
 
   return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 
 }
 
 
-// ========================================
-// LOCAL DATA
-// ========================================
+// ================= SAVE LOCAL DATA ====================
 
 function saveLocalData() {
 
@@ -1049,9 +1065,7 @@ function saveLocalData() {
 }
 
 
-// ========================================
-// COUNTS
-// ========================================
+// ================= COUNTS =============================
 
 function updateCounts() {
 
@@ -1079,9 +1093,9 @@ function updateCounts() {
 }
 
 
-// ========================================
-// REGISTER
-// ========================================
+// =====================================================
+// AUTH - REGISTER
+// =====================================================
 
 if ($("registerBtn")) {
 
@@ -1140,11 +1154,16 @@ if ($("registerBtn")) {
             "users/" + result.user.uid
           ),
           {
+
             name: name,
+
             email: email,
+
             type: type,
+
             createdAt:
               new Date().toLocaleString()
+
           }
         );
 
@@ -1154,14 +1173,9 @@ if ($("registerBtn")) {
         );
 
 
-        if ($("regName"))
-          $("regName").value = "";
-
-        if ($("regEmail"))
-          $("regEmail").value = "";
-
-        if ($("regPassword"))
-          $("regPassword").value = "";
+        $("regName").value = "";
+        $("regEmail").value = "";
+        $("regPassword").value = "";
 
 
       } catch (error) {
@@ -1178,9 +1192,9 @@ if ($("registerBtn")) {
 }
 
 
-// ========================================
-// LOGIN
-// ========================================
+// =====================================================
+// AUTH - LOGIN
+// =====================================================
 
 if ($("loginBtn")) {
 
@@ -1190,12 +1204,12 @@ if ($("loginBtn")) {
 
       const emailInput =
         document.querySelector(
-          "#login input[type='email']"
+          '#login input[type="email"]'
         );
 
       const passwordInput =
         document.querySelector(
-          "#login input[type='password']"
+          '#login input[type="password"]'
         );
 
 
@@ -1225,6 +1239,7 @@ if ($("loginBtn")) {
           password
         );
 
+
         alert(
           "✅ Login Successful!"
         );
@@ -1244,9 +1259,9 @@ if ($("loginBtn")) {
 }
 
 
-// ========================================
+// =====================================================
 // FORGOT PASSWORD
-// ========================================
+// =====================================================
 
 if ($("resetBtn")) {
 
@@ -1254,13 +1269,14 @@ if ($("resetBtn")) {
     "click",
     async () => {
 
-      const input =
+      const emailInput =
         document.querySelector(
-          "#login input[type='email']"
+          '#login input[type="email"]'
         );
 
+
       const email =
-        input?.value.trim();
+        emailInput?.value.trim();
 
 
       if (!email) {
@@ -1281,6 +1297,7 @@ if ($("resetBtn")) {
           email
         );
 
+
         alert(
           "✅ Password reset email bhej diya gaya. Gmail check karo."
         );
@@ -1300,9 +1317,9 @@ if ($("resetBtn")) {
 }
 
 
-// ========================================
+// =====================================================
 // LOGOUT
-// ========================================
+// =====================================================
 
 if ($("logoutBtn")) {
 
@@ -1316,6 +1333,147 @@ if ($("logoutBtn")) {
 
         alert(
           "✅ Logout Successful!"
+        );
+
+      } catch (error) {
+
+        alert(
+          "❌ " + error.message
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+// =====================================================
+// SELLER PROFILE LOAD
+// =====================================================
+
+async function loadSellerProfile(uid) {
+
+  if (!uid) return;
+
+
+  try {
+
+    const snap =
+      await get(
+        ref(
+          db,
+          "sellerProfile/" + uid
+        )
+      );
+
+
+    if (!snap.exists()) return;
+
+
+    const p =
+      snap.val();
+
+
+    if ($("sellerName"))
+      $("sellerName").value =
+        p.name || "";
+
+
+    if ($("sellerCompany"))
+      $("sellerCompany").value =
+        p.company || "";
+
+
+    if ($("sellerPhone"))
+      $("sellerPhone").value =
+        p.phone || "";
+
+
+    if ($("sellerEmail"))
+      $("sellerEmail").value =
+        p.email || "";
+
+
+    if ($("sellerAddress"))
+      $("sellerAddress").value =
+        p.address || "";
+
+
+  } catch (error) {
+
+    console.log(
+      "Seller profile error:",
+      error
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// SELLER PROFILE SAVE
+// =====================================================
+
+if ($("saveSellerBtn")) {
+
+  $("saveSellerBtn").addEventListener(
+    "click",
+    async () => {
+
+      if (!auth.currentUser) {
+
+        alert(
+          "⚠️ Pehle Seller Login karo."
+        );
+
+        return;
+
+      }
+
+
+      const data = {
+
+        name:
+          $("sellerName")?.value.trim() || "",
+
+        company:
+          $("sellerCompany")?.value.trim() || "",
+
+        phone:
+          $("sellerPhone")?.value.trim() || "",
+
+        email:
+          $("sellerEmail")?.value.trim() || "",
+
+        address:
+          $("sellerAddress")?.value.trim() || "",
+
+        uid:
+          auth.currentUser.uid,
+
+        updatedAt:
+          new Date().toLocaleString()
+
+      };
+
+
+      try {
+
+        await set(
+          ref(
+            db,
+            "sellerProfile/" +
+            auth.currentUser.uid
+          ),
+          data
+        );
+
+
+        alert(
+          "✅ Seller Profile Saved!"
         );
 
 
@@ -1333,9 +1491,9 @@ if ($("logoutBtn")) {
 }
 
 
-// ========================================
+// =====================================================
 // AUTH STATE
-// ========================================
+// =====================================================
 
 onAuthStateChanged(
   auth,
@@ -1343,12 +1501,12 @@ onAuthStateChanged(
 
     const emailInput =
       document.querySelector(
-        "#login input[type='email']"
+        '#login input[type="email"]'
       );
 
     const passwordInput =
       document.querySelector(
-        "#login input[type='password']"
+        '#login input[type="password"]'
       );
 
 
@@ -1359,7 +1517,7 @@ onAuthStateChanged(
 
       try {
 
-        const snapshot =
+        const snap =
           await get(
             ref(
               db,
@@ -1368,10 +1526,10 @@ onAuthStateChanged(
           );
 
 
-        if (snapshot.exists()) {
+        if (snap.exists()) {
 
           userData =
-            snapshot.val();
+            snap.val();
 
         }
 
@@ -1410,18 +1568,22 @@ onAuthStateChanged(
           "none";
 
 
-      const loginTitle =
-        $("login")?.querySelector("h2");
+      if ($("login")) {
+
+        const title =
+          $("login").querySelector("h2");
 
 
-      if (loginTitle) {
+        if (title) {
 
-        loginTitle.innerHTML =
-          "✅ Welcome<br>" +
-          safe(
-            userData.name ||
-            user.email
-          );
+          title.innerHTML =
+            "✅ Welcome<br>" +
+            escapeHTML(
+              userData.name ||
+              user.email
+            );
+
+        }
 
       }
 
@@ -1453,7 +1615,9 @@ onAuthStateChanged(
 
       if (isSeller) {
 
-        loadSellerProfile(user.uid);
+        await loadSellerProfile(
+          user.uid
+        );
 
       }
 
@@ -1484,13 +1648,17 @@ onAuthStateChanged(
           "block";
 
 
-      const loginTitle =
-        $("login")?.querySelector("h2");
+      if ($("login")) {
+
+        const title =
+          $("login").querySelector("h2");
 
 
-      if (loginTitle)
-        loginTitle.innerText =
-          "🔐 Login";
+        if (title)
+          title.innerText =
+            "🔐 Login";
+
+      }
 
 
       if ($("sellerMenu"))
@@ -1518,156 +1686,9 @@ onAuthStateChanged(
 );
 
 
-// ========================================
-// SELLER PROFILE SAVE
-// ========================================
-
-if ($("saveSellerBtn")) {
-
-  $("saveSellerBtn").addEventListener(
-    "click",
-    async () => {
-
-      if (!auth.currentUser) {
-
-        alert(
-          "⚠️ Pehle Seller Login karo."
-        );
-
-        return;
-
-      }
-
-
-      const data = {
-
-        name:
-          $("sellerName")?.value.trim() || "",
-
-        company:
-          $("sellerCompany")?.value.trim() || "",
-
-        phone:
-          $("sellerPhone")?.value.trim() || "",
-
-        email:
-          $("sellerEmail")?.value.trim() || "",
-
-        address:
-          $("sellerAddress")?.value.trim() || "",
-
-        updatedAt:
-          new Date().toLocaleString()
-
-      };
-
-
-      if (!data.name || !data.phone) {
-
-        alert(
-          "⚠️ Seller Name aur Mobile Number bharna zaroori hai."
-        );
-
-        return;
-
-      }
-
-
-      try {
-
-        await set(
-          ref(
-            db,
-            "sellerProfile/" +
-            auth.currentUser.uid
-          ),
-          data
-        );
-
-
-        alert(
-          "✅ Seller Profile Saved Successfully!"
-        );
-
-
-      } catch (error) {
-
-        alert(
-          "❌ " + error.message
-        );
-
-      }
-
-    }
-  );
-
-}
-
-
-// ========================================
-// LOAD SELLER PROFILE
-// ========================================
-
-async function loadSellerProfile(uid) {
-
-  try {
-
-    const snapshot =
-      await get(
-        ref(
-          db,
-          "sellerProfile/" + uid
-        )
-      );
-
-
-    if (!snapshot.exists()) return;
-
-
-    const data =
-      snapshot.val();
-
-
-    if ($("sellerName"))
-      $("sellerName").value =
-        data.name || "";
-
-
-    if ($("sellerCompany"))
-      $("sellerCompany").value =
-        data.company || "";
-
-
-    if ($("sellerPhone"))
-      $("sellerPhone").value =
-        data.phone || "";
-
-
-    if ($("sellerEmail"))
-      $("sellerEmail").value =
-        data.email || "";
-
-
-    if ($("sellerAddress"))
-      $("sellerAddress").value =
-        data.address || "";
-
-
-  } catch (error) {
-
-    console.log(
-      "Seller profile error:",
-      error
-    );
-
-  }
-
-}
-
-
-// ========================================
-// IMAGE COMPRESS
-// ========================================
+// =====================================================
+// COMPRESS IMAGE
+// =====================================================
 
 function compressImage(file) {
 
@@ -1686,7 +1707,7 @@ function compressImage(file) {
 
         img.onload = () => {
 
-          const maxSize = 700;
+          const maxWidth = 700;
 
           let width =
             img.width;
@@ -1695,28 +1716,15 @@ function compressImage(file) {
             img.height;
 
 
-          if (width > maxSize) {
+          if (width > maxWidth) {
 
             height =
               height *
-              maxSize /
+              maxWidth /
               width;
 
             width =
-              maxSize;
-
-          }
-
-
-          if (height > maxSize) {
-
-            width =
-              width *
-              maxSize /
-              height;
-
-            height =
-              maxSize;
+              maxWidth;
 
           }
 
@@ -1728,24 +1736,22 @@ function compressImage(file) {
 
 
           canvas.width =
-            Math.round(width);
+            width;
 
           canvas.height =
-            Math.round(height);
+            height;
 
 
           const ctx =
-            canvas.getContext(
-              "2d"
-            );
+            canvas.getContext("2d");
 
 
           ctx.drawImage(
             img,
             0,
             0,
-            canvas.width,
-            canvas.height
+            width,
+            height
           );
 
 
@@ -1781,9 +1787,9 @@ function compressImage(file) {
 }
 
 
-// ========================================
+// =====================================================
 // UPLOAD PRODUCT
-// ========================================
+// =====================================================
 
 if ($("uploadBtn")) {
 
@@ -1794,7 +1800,7 @@ if ($("uploadBtn")) {
       if (!auth.currentUser) {
 
         alert(
-          "⚠️ Product upload karne ke liye Seller Login karo."
+          "⚠️ Product upload karne ke liye Login karo."
         );
 
         return;
@@ -1803,19 +1809,19 @@ if ($("uploadBtn")) {
 
 
       const name =
-        $("productName")?.value.trim() || "";
+        $("productName")?.value.trim();
 
       const price =
-        $("productPrice")?.value.trim() || "";
+        $("productPrice")?.value.trim();
 
       const category =
-        $("productCategory")?.value || "";
+        $("productCategory")?.value;
 
       const description =
-        $("productDescription")?.value.trim() || "";
+        $("productDescription")?.value.trim();
 
       const file =
-        $("productImage")?.files?.[0] || null;
+        $("productImage")?.files?.[0];
 
 
       if (!name || !price || !category) {
@@ -1829,27 +1835,12 @@ if ($("uploadBtn")) {
       }
 
 
+      let image = "";
+
+
       try {
 
-        let image = "";
-
-
         if (file) {
-
-          if (
-            !file.type.startsWith(
-              "image/"
-            )
-          ) {
-
-            alert(
-              "⚠️ Sirf image file select karo."
-            );
-
-            return;
-
-          }
-
 
           image =
             await compressImage(file);
@@ -1857,61 +1848,33 @@ if ($("uploadBtn")) {
         }
 
 
-        let sellerName =
-          auth.currentUser.email;
+        const product = {
 
+          name: name,
 
-        try {
+          price: price,
 
-          const profile =
-            await get(
-              ref(
-                db,
-                "sellerProfile/" +
-                auth.currentUser.uid
-              )
-            );
+          category: category,
 
+          description: description,
 
-          if (profile.exists()) {
+          image: image,
 
-            sellerName =
-              profile.val().name ||
-              sellerName;
+          sellerName:
+            auth.currentUser.email,
 
-          }
+          sellerUid:
+            auth.currentUser.uid,
 
-        } catch (_) {}
+          createdAt:
+            new Date().toLocaleString()
+
+        };
 
 
         await push(
           productsRef,
-          {
-
-            name: name,
-
-            price: price,
-
-            category: category,
-
-            description: description,
-
-            image: image,
-
-            sellerName: sellerName,
-
-            sellerUid:
-              auth.currentUser.uid,
-
-            sellerEmail:
-              auth.currentUser.email,
-
-            rating: 0,
-
-            createdAt:
-              new Date().toLocaleString()
-
-          }
+          product
         );
 
 
@@ -1920,23 +1883,20 @@ if ($("uploadBtn")) {
         );
 
 
-        if ($("productName"))
-          $("productName").value = "";
+        $("productName").value = "";
 
-        if ($("productPrice"))
-          $("productPrice").value = "";
+        $("productPrice").value = "";
 
-        if ($("productCategory"))
-          $("productCategory").value = "";
+        $("productCategory").value = "";
 
-        if ($("productDescription"))
-          $("productDescription").value = "";
+        $("productDescription").value = "";
 
-        if ($("productImage"))
-          $("productImage").value = "";
+        $("productImage").value = "";
 
 
       } catch (error) {
+
+        console.error(error);
 
         alert(
           "❌ Product Upload Error: " +
@@ -1951,234 +1911,350 @@ if ($("uploadBtn")) {
 }
 
 
-// ========================================
+// =====================================================
 // RENDER PRODUCTS
-// ========================================
+// =====================================================
 
-function renderProducts(
-  snapshot,
-  search = ""
+function renderProductCard(
+  key,
+  p,
+  showDelete = false
 ) {
 
-  const box =
-    $("allProducts") ||
-    $("productList");
+  const image =
+    p.image ||
+    "https://via.placeholder.com/600x300?text=ExportHub+India";
 
 
-  if (!box) return;
+  return `
+
+    <div class="card productCard"
+         data-key="${escapeHTML(key)}">
+
+      <img
+        src="${image}"
+        style="
+          width:100%;
+          height:180px;
+          object-fit:cover;
+          border-radius:8px;
+        "
+      >
+
+      <h3>
+        ${escapeHTML(
+          p.name || "Product"
+        )}
+      </h3>
+
+      <p>
+        💰 ${escapeHTML(
+          p.price || "Contact for price"
+        )}
+      </p>
+
+      <p>
+        📂 ${escapeHTML(
+          p.category || ""
+        )}
+      </p>
+
+      <p>
+        ${escapeHTML(
+          p.description || ""
+        )}
+      </p>
+
+      <button
+        type="button"
+        class="btn addCartBtn"
+        data-key="${escapeHTML(key)}">
+        🛒 Add to Cart
+      </button>
+
+      <button
+        type="button"
+        class="btn wishlistBtn"
+        data-key="${escapeHTML(key)}">
+        ❤️ Wishlist
+      </button>
+
+      ${
+        showDelete
+        ? `
+          <button
+            type="button"
+            class="btn deleteBtn"
+            data-key="${escapeHTML(key)}">
+            🗑️ Delete
+          </button>
+        `
+        : ""
+      }
+
+    </div>
+
+  `;
+
+}
 
 
-  box.innerHTML = "";
+// =====================================================
+// LOAD ALL PRODUCTS
+// =====================================================
+
+onValue(
+  productsRef,
+  (snapshot) => {
+
+    const box =
+      $("allProducts");
 
 
-  const term =
-    search.toLowerCase();
+    if (box) {
+
+      box.innerHTML = "";
 
 
-  let count = 0;
+      if (!snapshot.exists()) {
+
+        box.innerHTML =
+          "No Products Yet.";
+
+      } else {
+
+        snapshot.forEach(
+          (child) => {
+
+            box.innerHTML +=
+              renderProductCard(
+                child.key,
+                child.val()
+              );
+
+          }
+        );
+
+      }
+
+    }
 
 
-  snapshot.forEach(
-    (child) => {
+    if ($("productList")) {
 
-      const key =
-        child.key;
+      const list =
+        $("productList");
 
-      const p =
-        child.val();
+      list.innerHTML = "";
 
 
-      const text =
-        (
-          (p.name || "") +
-          " " +
-          (p.category || "") +
-          " " +
-          (p.description || "")
-        ).toLowerCase();
+      snapshot.forEach(
+        (child) => {
+
+          list.innerHTML +=
+            renderProductCard(
+              child.key,
+              child.val()
+            );
+
+        }
+      );
+
+    }
 
 
-      if (
-        term &&
-        !text.includes(term)
-      ) {
+    if ($("totalProducts")) {
+
+      let count = 0;
+
+      snapshot.forEach(
+        () => count++
+      );
+
+      $("totalProducts").innerText =
+        count;
+
+    }
+
+  }
+);
+
+
+// =====================================================
+// PRODUCT DETAILS
+// =====================================================
+
+document.addEventListener(
+  "click",
+  async (e) => {
+
+    const card =
+      e.target.closest(
+        ".productCard"
+      );
+
+
+    if (!card) return;
+
+
+    if (
+      e.target.closest("button") ||
+      e.target.closest("a")
+    ) {
+
+      return;
+
+    }
+
+
+    const key =
+      card.dataset.key;
+
+
+    if (!key) return;
+
+
+    try {
+
+      const snapshot =
+        await get(
+          ref(
+            db,
+            "products/" + key
+          )
+        );
+
+
+      if (!snapshot.exists()) {
 
         return;
 
       }
 
 
-      count++;
+      const p =
+        snapshot.val();
 
 
-      const image =
-        p.image ||
-        "https://via.placeholder.com/600x300?text=ExportHub+India";
+      if ($("detailImage")) {
+
+        $("detailImage").src =
+          p.image ||
+          "https://via.placeholder.com/600x300?text=ExportHub+India";
+
+      }
 
 
-      box.innerHTML += `
+      if ($("detailName")) {
 
-        <div
-          class="card productCard"
-          data-key="${safe(key)}">
+        $("detailName").innerText =
+          p.name || "";
 
-          <img
-            src="${safe(image)}"
-            style="width:100%;height:180px;object-fit:cover;border-radius:8px;">
+      }
 
-          <h3>
-            ${safe(p.name || "Product")}
-          </h3>
 
-          <p>
-            💰 ${safe(p.price || "Contact for price")}
-          </p>
+      if ($("detailPrice")) {
 
-          <p>
-            📂 ${safe(p.category || "")}
-          </p>
+        $("detailPrice").innerText =
+          "💰 " +
+          (
+            p.price ||
+            "Contact for price"
+          );
 
-          <p>
-            🏪 ${safe(p.sellerName || "Seller")}
-          </p>
+      }
 
-          <button
-            type="button"
-            class="btn addCartBtn"
-            data-key="${safe(key)}">
-            🛒 Add to Cart
-          </button>
 
-          <button
-            type="button"
-            class="btn buyNowBtn"
-            data-key="${safe(key)}">
-            💳 Buy Now
-          </button>
+      if ($("detailCategory")) {
 
-          <button
-            type="button"
-            class="btn wishlistBtn"
-            data-key="${safe(key)}">
-            ❤️ Wishlist
-          </button>
+        $("detailCategory").innerText =
+          "📂 " +
+          (
+            p.category ||
+            ""
+          );
 
-          <button
-            type="button"
-            class="btn shareBtn"
-            data-key="${safe(key)}">
-            📤 Share
-          </button>
+      }
 
-          <button
-            type="button"
-            class="btn ratingBtn"
-            data-key="${safe(key)}">
-            ⭐ Rate
-          </button>
 
-        </div>
+      if ($("detailDescription")) {
 
-      `;
+        $("detailDescription").innerText =
+          p.description ||
+          "";
+
+      }
+
+
+      selectedProduct = {
+
+        key: key,
+
+        name:
+          p.name || "Product",
+
+        price:
+          p.price ||
+          "Contact for price",
+
+        category:
+          p.category ||
+          "",
+
+        description:
+          p.description ||
+          "",
+
+        image:
+          p.image ||
+          "",
+
+        sellerName:
+          p.sellerName ||
+          "",
+
+        sellerUid:
+          p.sellerUid ||
+          ""
+
+      };
+
+
+      if ($("product-details")) {
+
+        $("product-details").style.display =
+          "block";
+
+
+        $("product-details")
+          .scrollIntoView({
+            behavior: "smooth"
+          });
+
+      }
+
+    } catch (error) {
+
+      console.log(
+        "Product details error:",
+        error
+      );
 
     }
-  );
-
-
-  if (count === 0) {
-
-    box.innerHTML =
-      "🔍 No products found.";
-
-  }
-
-
-  if ($("totalProducts")) {
-
-    $("totalProducts").innerText =
-      snapshot.size;
-
-  }
-
-}
-
-
-// ========================================
-// REAL-TIME PRODUCTS
-// ========================================
-
-onValue(
-  productsRef,
-  (snapshot) => {
-
-    const search =
-      $("searchBox")?.value.trim() || "";
-
-    renderProducts(
-      snapshot,
-      search
-    );
-
-    loadMyProducts();
-
-  },
-  (error) => {
-
-    console.log(
-      "Products listener error:",
-      error
-    );
 
   }
 );
 
 
-// ========================================
-// SEARCH
-// ========================================
+// =====================================================
+// ADD CART
+// =====================================================
 
-if ($("searchBox")) {
-
-  $("searchBox").addEventListener(
-    "input",
-    async () => {
-
-      try {
-
-        const snapshot =
-          await get(productsRef);
-
-
-        renderProducts(
-          snapshot,
-          $("searchBox").value.trim()
-        );
-
-
-      } catch (error) {
-
-        alert(
-          "❌ Search Error: " +
-          error.message
-        );
-
-      }
-
-    }
-  );
-
-}
-
-
-// ========================================
-// EDIT PRODUCT
-// ========================================
-
-async function editProduct(key) {
+async function addProductToCart(key) {
 
   try {
 
-    const snapshot =
+    const snap =
       await get(
         ref(
           db,
@@ -2187,10 +2263,10 @@ async function editProduct(key) {
       );
 
 
-    if (!snapshot.exists()) {
+    if (!snap.exists()) {
 
       alert(
-        "❌ Product not found."
+        "❌ Product nahi mila."
       );
 
       return;
@@ -2199,40 +2275,6 @@ async function editProduct(key) {
 
 
     const p =
-      snapshot.val();
-
-
-    const name =
-      prompt(
-        "Product Name:",
-        p.name || ""
-      );
-
-
-    if (name === null) return;
-
-
-    const price =
-      prompt(
-        "Product Price:",
-        p.price || ""
-      );
-
-
-    if (price === null) return;
-
-
-    const category =
-      prompt(
-        "Product Category:",
-        p.category || ""
-      );
-
-
-    if (category === null) return;
-
-alert("✅ JavaScript chal raha hai!");
-    
-</script>
+ </script>
 </body>
 </html>
