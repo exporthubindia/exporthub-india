@@ -1608,17 +1608,21 @@ onAuthStateChanged(
 
     const emailInput =
       document.querySelector(
-        '#login input[type="email"]'
+        '#loginSection input[type="email"]'
       );
 
     const passwordInput =
       document.querySelector(
-        '#login input[type="password"]'
+        '#loginSection input[type="password"]'
       );
 
 
     if (user) {
+if ($("loginSection"))
+  $("loginSection").style.display = "none";
 
+if ($("registerSection"))
+  $("registerSection").style.display = "none";
       let userData = {};
 
 
