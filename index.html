@@ -1654,11 +1654,37 @@ onAuthStateChanged(
       if ($("loginBtn"))
         $("loginBtn").style.display =
           "none";
+if ($("resetBtn"))
+  $("resetBtn").style.display = "inline-block";
 
-      if ($("resetBtn"))
-        $("resetBtn
-<script>
-alert("✅ JavaScript test chal raha hai!");
+if ($("logoutBtn"))
+  $("logoutBtn").style.display = "inline-block";
+
+if (emailInput)
+  emailInput.value = user.email || "";
+
+if (passwordInput)
+  passwordInput.value = "";
+
+await loadSellerProfile(user.uid);
+
+} else {
+
+  if ($("loginBtn"))
+    $("loginBtn").style.display = "inline-block";
+
+  if ($("resetBtn"))
+    $("resetBtn").style.display = "inline-block";
+
+  if ($("logoutBtn"))
+    $("logoutBtn").style.display = "none";
+
+}
+
+});
+
+alert("✅ ExportHub India App Ready!");
+
 </script>
 </body>
 </html>
