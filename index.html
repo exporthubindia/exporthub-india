@@ -1635,6 +1635,8 @@ if ($("loginSection"))
 
 if ($("registerSection"))
   $("registerSection").style.display = "none";
+      if ($("accountButtons"))
+  $("accountButtons").style.display = "block";
       let userData = {};
 
 
@@ -1690,7 +1692,8 @@ if ($("loginSection"))
 
 if ($("registerSection"))
   $("registerSection").style.display = "block";
-      
+      if ($("accountButtons"))
+  $("accountButtons").style.display = "none";
   if ($("loginBtn"))
     $("loginBtn").style.display = "inline-block";
 
