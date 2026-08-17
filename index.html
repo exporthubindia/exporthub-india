@@ -1673,7 +1673,11 @@ if (passwordInput)
 await loadSellerProfile(user.uid);
 
 } else {
+if ($("loginSection"))
+  $("loginSection").style.display = "block";
 
+if ($("registerSection"))
+  $("registerSection").style.display = "block";
   if ($("loginBtn"))
     $("loginBtn").style.display = "inline-block";
 
