@@ -1795,6 +1795,77 @@ onValue(
 
   }
 );
+  // =====================================================
+// ADD PRODUCT TO CART
+// =====================================================
+
+window.addProductToCart = async function(productId) {
+
+  try {
+
+    const snap = await get(
+      ref(db, "products/" + productId)
+    );
+
+    if (!snap.exists()) {
+
+      alert("❌ Product nahi mila.");
+      return;
+
+    }
+
+    const product = snap.val();
+
+    const existing =
+      cart.find(item => item.id === productId);
+
+    if (existing) {
+
+      existing.quantity =
+        (existing.quantity || 1) + 1;
+
+    } else {
+
+      cart.push({
+
+        id: productId,
+
+        name: product.name || "",
+
+        price: product.price || "0",
+
+        category: product.category || "",
+
+        description: product.description || "",
+
+        image: product.image || "",
+
+        sellerUid: product.sellerUid || "",
+
+        quantity: 1
+
+      });
+
+    }
+
+    saveLocalData();
+
+    alert("🛒 Product Cart me add ho gaya!");
+
+  } catch (error) {
+
+    console.error(
+      "Add to cart error:",
+      error
+    );
+
+    alert(
+      "❌ Cart me product add nahi hua."
+    );
+
+  }
+
+};
 // =====================================================
 // AUTH STATE
 // =====================================================
