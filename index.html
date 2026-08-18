@@ -1325,15 +1325,11 @@ if ($("loginBtn")) {
     "click",
     async () => {
 
-      const email =
-        document.querySelector(
-          '#login input[type="email"]'
-        )?.value.trim();
+    const email =
+  $("emailInput")?.value.trim();
 
-      const password =
-        document.querySelector(
-          '#login input[type="password"]'
-        )?.value || "";
+const password =
+  $("passwordInput")?.value || "";
 
 
       if (!email || !password) {
@@ -1392,9 +1388,7 @@ if ($("resetBtn")) {
     async () => {
 
       const email =
-        document.querySelector(
-          '#login input[type="email"]'
-        )?.value.trim();
+  $("emailInput")?.value.trim();
 
 
       if (!email) {
