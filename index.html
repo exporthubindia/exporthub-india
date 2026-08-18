@@ -1603,7 +1603,121 @@ if ($("saveSellerBtn")) {
 
 }
 
+// =====================================================
+// UPLOAD PRODUCT
+// =====================================================
 
+if ($("uploadBtn")) {
+
+  $("uploadBtn").addEventListener(
+    "click",
+    async () => {
+
+      if (!auth.currentUser) {
+
+        alert("⚠️ Pehle Seller Login karo.");
+
+        return;
+
+      }
+
+      const name =
+        $("productName")?.value.trim();
+
+      const price =
+        $("productPrice")?.value.trim();
+
+      const category =
+        $("productCategory")?.value || "";
+
+      const description =
+        $("productDescription")?.value.trim();
+
+      const imageFile =
+        $("productImage")?.files?.[0];
+
+      if (!name || !price || !category || !description) {
+
+        alert(
+          "⚠️ Product Name, Price, Category aur Description bharna zaroori hai."
+        );
+
+        return;
+
+      }
+
+      try {
+
+        let image = "";
+
+        if (imageFile) {
+
+          image =
+            await compressImage(imageFile);
+
+        }
+
+        const product = {
+
+          name:
+            name,
+
+          price:
+            price,
+
+          category:
+            category,
+
+          description:
+            description,
+
+          image:
+            image,
+
+          sellerUid:
+            auth.currentUser.uid,
+
+          sellerEmail:
+            auth.currentUser.email || "",
+
+          createdAt:
+            new Date().toISOString()
+
+        };
+
+        await push(
+          productsRef,
+          product
+        );
+
+        alert(
+          "✅ Product Successfully Uploaded!"
+        );
+
+        $("productName").value = "";
+        $("productPrice").value = "";
+        $("productCategory").value = "";
+        $("productDescription").value = "";
+        $("productImage").value = "";
+
+      } catch (error) {
+
+        console.error(
+          "Product upload error:",
+          error
+        );
+
+        alert(
+          "❌ Product upload nahi hua: " +
+          error.message
+        );
+
+      }
+
+    }
+  );
+
+          }
 // =====================================================
 // AUTH STATE
 // =====================================================
