@@ -1660,17 +1660,17 @@ onAuthStateChanged(
         );
 
       }
+if ($("loginBtn"))
+  $("loginBtn").style.display = "none";
 
+if ($("accountButtons"))
+  $("accountButtons").style.display = "block";
 
-      if ($("loginBtn"))
-        $("loginBtn").style.display =
-          "none";
 if ($("resetBtn"))
-  $("resetBtn").style.display = "block";
+  $("resetBtn").style.display = "inline-block";
 
 if ($("logoutBtn"))
-  $("logoutBtn").style.display = "block";
-
+  $("logoutBtn").style.display = "inline-block";
 if (emailInput)
   emailInput.value = user.email || "";
 
@@ -1683,13 +1683,10 @@ await loadSellerProfile(user.uid);
 
 
   if ($("loginBtn"))
-    $("loginBtn").style.display = "inline-block";
+  $("loginBtn").style.display = "inline-block";
 
-  if ($("resetBtn"))
-    $("resetBtn").style.display = "inline-block";
-
-  if ($("logoutBtn"))
-    $("logoutBtn").style.display = "none";
+if ($("accountButtons"))
+  $("accountButtons").style.display = "none";
 
 }
 
