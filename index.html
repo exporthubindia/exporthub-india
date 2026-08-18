@@ -1022,7 +1022,7 @@ const productsRef = ref(db, "products");
 // =====================================================
 
 let selectedProduct = null;
-
+let userData = null;
 let cart =
   JSON.parse(
     localStorage.getItem("cart") || "[]"
