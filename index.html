@@ -1630,9 +1630,7 @@ onAuthStateChanged(
 
 
     if (user) {
-      if ($("accountButtons"))
-  $("accountButtons").style.display = "block";
-      let userData = {};
+    
 
 
       try {
@@ -1682,13 +1680,8 @@ if (passwordInput)
 await loadSellerProfile(user.uid);
 
 } else {
-if ($("loginSection"))
-  $("loginSection").style.display = "block";
 
-if ($("registerSection"))
-  $("registerSection").style.display = "block";
-      if ($("accountButtons"))
-  $("accountButtons").style.display = "none";
+
   if ($("loginBtn"))
     $("loginBtn").style.display = "inline-block";
 
