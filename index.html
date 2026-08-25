@@ -921,21 +921,36 @@ No Orders Yet.
   </section>
   <section id="cart">
 
-<h2>🛒 Shopping Cart</h2>
+  <h2>🛒 Shopping Cart</h2>
 
-<div id="cartItems" class="card">
-No products added yet.
-</div>
-<br>
+  <div id="cartItems" class="card">
+    No products added yet.
+  </div>
 
-<button
-class="btn"
-onclick="document.getElementById('checkout').scrollIntoView({behavior:'smooth'})">
-💳 Proceed to Checkout
-</button>
-    <button class="btn shareBtn">
-📤 Share Product
-    </button>
+  <br>
+
+  <div id="cartSummary" class="card">
+    <h3>🧾 Cart Summary</h3>
+
+    <p>
+      Total Items:
+      <strong id="cartItemCount">0</strong>
+    </p>
+
+    <p>
+      Total Amount:
+      <strong>₹<span id="cartTotal">0</span></strong>
+    </p>
+  </div>
+
+  <br>
+
+  <button
+    id="checkoutCartBtn"
+    class="btn">
+    💳 Proceed to Checkout
+  </button>
+
   </section>
 <footer style="background:#0b3d91;color:white;text-align:center;padding:12px;font-size:14px;">
 <p>© 2026 ExportHub India | Global Trade Network</p>
@@ -1078,7 +1093,289 @@ function saveLocalData() {
   renderWishlist();
 
 }
+// =====================================================
+// RENDER CART
+// =====================================================
 
+function renderCart() {
+
+  const container = $("cartItems");
+
+  if (!container) return;
+
+  if (!cart.length) {
+
+    container.innerHTML = `
+      <div style="text-align:center;padding:20px;">
+        <h3>🛒 Cart Empty</h3>
+        <p>Abhi cart mein koi product nahi hai.</p>
+      </div>
+    `;
+
+    if ($("cartItemCount"))
+      $("cartItemCount").innerText = "0";
+
+    if ($("cartTotal"))
+      $("cartTotal").innerText = "0";
+
+    return;
+  }
+
+
+  let total = 0;
+  let totalItems = 0;
+
+
+  container.innerHTML = "";
+
+
+  cart.forEach((item, index) => {
+
+    const quantity =
+      Number(item.quantity || 1);
+
+    const price =
+      Number(
+        String(item.price || "0")
+          .replace(/[^0-9.]/g, "")
+      ) || 0;
+
+    const itemTotal =
+      price * quantity;
+
+    total += itemTotal;
+
+    totalItems += quantity;
+
+
+    const image =
+      item.image ||
+      "https://via.placeholder.com/500x350?text=Product";
+
+
+    container.innerHTML += `
+
+      <div
+        class="card"
+        style="
+          margin-bottom:15px;
+          padding:15px;
+          border:1px solid #ddd;
+          border-radius:12px;
+        "
+      >
+
+        <div
+          style="
+            display:flex;
+            gap:15px;
+            align-items:center;
+            flex-wrap:wrap;
+          "
+        >
+
+          <img
+            src="${escapeHTML(image)}"
+            alt="${escapeHTML(item.name)}"
+            style="
+              width:110px;
+              height:90px;
+              object-fit:cover;
+              border-radius:10px;
+            "
+          >
+
+          <div style="flex:1;">
+
+            <h3>
+              ${escapeHTML(item.name)}
+            </h3>
+
+            <p>
+              📂 ${escapeHTML(item.category)}
+            </p>
+
+            <p>
+              💰 ₹${price.toLocaleString("en-IN")}
+            </p>
+
+            <div>
+
+              <button
+                class="btn"
+                onclick="decreaseCartQuantity(${index})">
+                −
+              </button>
+
+              <strong
+                style="margin:0 12px;">
+                ${quantity}
+              </strong>
+
+              <button
+                class="btn"
+                onclick="increaseCartQuantity(${index})">
+                +
+              </button>
+
+            </div>
+
+            <p>
+              <strong>
+                Item Total:
+                ₹${itemTotal.toLocaleString("en-IN")}
+              </strong>
+            </p>
+
+            <button
+              class="btn"
+              onclick="removeFromCart(${index})">
+              🗑️ Remove
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+
+  if ($("cartItemCount"))
+    $("cartItemCount").innerText =
+      totalItems;
+
+
+  if ($("cartTotal"))
+    $("cartTotal").innerText =
+      total.toLocaleString("en-IN");
+
+}
+
+
+// =====================================================
+// INCREASE CART QUANTITY
+// =====================================================
+
+window.increaseCartQuantity =
+  function(index) {
+
+    if (!cart[index]) return;
+
+    cart[index].quantity =
+      Number(cart[index].quantity || 1) + 1;
+
+    saveLocalData();
+
+  };
+
+
+// =====================================================
+// DECREASE CART QUANTITY
+// =====================================================
+
+window.decreaseCartQuantity =
+  function(index) {
+
+    if (!cart[index]) return;
+
+    const quantity =
+      Number(cart[index].quantity || 1);
+
+    if (quantity > 1) {
+
+      cart[index].quantity =
+        quantity - 1;
+
+    } else {
+
+      cart.splice(index, 1);
+
+    }
+
+    saveLocalData();
+
+  };
+
+
+// =====================================================
+// REMOVE FROM CART
+// =====================================================
+
+window.removeFromCart =
+  function(index) {
+
+    if (!cart[index]) return;
+
+    const productName =
+      cart[index].name || "Product";
+
+    const confirmRemove =
+      confirm(
+        `Kya aap "${productName}" ko cart se remove karna chahte hain?`
+      );
+
+    if (!confirmRemove) return;
+
+    cart.splice(index, 1);
+
+    saveLocalData();
+
+  };
+
+
+// =====================================================
+// CHECKOUT BUTTON
+// =====================================================
+
+if ($("checkoutCartBtn")) {
+
+  $("checkoutCartBtn")
+    .addEventListener(
+      "click",
+      () => {
+
+        if (!cart.length) {
+
+          alert(
+            "⚠️ Pehle cart mein product add karo."
+          );
+
+          return;
+
+        }
+
+        const checkout =
+          $("checkout");
+
+        if (checkout) {
+
+          checkout.scrollIntoView({
+            behavior: "smooth"
+          });
+
+        } else {
+
+          alert(
+            "⚠️ Checkout section nahi mila."
+          );
+
+        }
+
+      }
+    );
+
+}
+
+
+// =====================================================
+// INITIAL CART RENDER
+// =====================================================
+
+renderCart();
 
 // =====================================================
 // COUNTS
