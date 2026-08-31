@@ -2148,73 +2148,134 @@ window.buyProduct =
   };
 
 
-// =====================================================
+  // =====================================================
 // WISHLIST
 // =====================================================
 
-window.addToWishlist =
-  async function(productId) {
+window.addToWishlist = async function(productId) {
 
-    try {
+  try {
 
-      const snap =
-        await get(
-          ref(
-            db,
-            "products/" +
-            productId
-          )
-        );
+    const snap = await get(
+      ref(db, "products/" + productId)
+    );
 
+    if (!snap.exists()) {
+      showMessage("❌ Product nahi mila.");
+      return;
+    }
 
-      if (!snap.exists()) return;
+    const product = snap.val();
 
-
-      const product =
-        snap.val();
-
-
-      if (
-        wishlist.some(
-          item =>
-            item.id === productId
-        )
-      ) {
-
-        showMessage(
-          "❤️ Product already wishlist mein hai."
-        );
-
-        return;
-      }
-
-
-      wishlist.push({
-
-        id: productId,
-
-        name:
-          product.name || "",
-
-        price:
-          product.price || "0",
-
-        image:
-          product.image || ""
-
-      });
-
-
-      saveLocalData();
+    if (
+      wishlist.some(
+        item => item.id === productId
+      )
+    ) {
 
       showMessage(
-        "❤️ Wishlist mein add ho gaya!"
+        "❤️ Product already wishlist mein hai."
       );
 
+      return;
+    }
 
-    } catch (error) {
+    wishlist.push({
 
-      console.error(
-    </script>    
+      id: productId,
+
+      name:
+        product.name || "",
+
+      price:
+        product.price || "0",
+
+      image:
+        product.image || ""
+
+    });
+
+    saveLocalData();
+
+    showMessage(
+      "❤️ Wishlist mein add ho gaya!"
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Wishlist error:",
+      error
+    );
+
+    showMessage(
+      "❌ Wishlist mein product add nahi hua."
+    );
+
+  }
+
+};
+
+
+// =====================================================
+// WISHLIST RENDER
+// =====================================================
+
+function renderWishlist() {
+
+  const box = $("wishlistItems");
+
+  if (!box) return;
+
+  if (!wishlist.length) {
+
+    box.innerHTML =
+      "<p>❤️ Wishlist empty hai.</p>";
+
+    return;
+  }
+
+  box.innerHTML =
+    wishlist.map(
+      (item, index) => `
+
+        <div class="card">
+
+          <h3>
+            ${escapeHTML(item.name)}
+          </h3>
+
+          <p>
+            💰 ${escapeHTML(item.price)}
+          </p>
+
+          <button
+            class="btn"
+            onclick="removeFromWishlist(${index})">
+            🗑️ Remove
+          </button>
+
+        </div>
+
+      `
+    ).join("");
+
+}
+
+
+// =====================================================
+// REMOVE WISHLIST
+// =====================================================
+
+window.removeFromWishlist = function(index) {
+
+  if (!wishlist[index]) return;
+
+  wishlist.splice(index, 1);
+
+  saveLocalData();
+
+};  
+  </script>
 </body>
 </html>
