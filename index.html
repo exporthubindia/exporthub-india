@@ -955,6 +955,1266 @@ No Orders Yet.
 <footer style="background:#0b3d91;color:white;text-align:center;padding:12px;font-size:14px;">
 <p>© 2026 ExportHub India | Global Trade Network</p>
 </footer>
+<script type="module">
 
+// =====================================================
+// EXPORTHUB INDIA — CLEAN JAVASCRIPT
+// =====================================================
+
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence,
+  signOut
+} from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+  getDatabase,
+  ref,
+  set,
+  push,
+  get,
+  update,
+  remove,
+  onValue
+} from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+
+
+// =====================================================
+// FIREBASE CONFIG
+// =====================================================
+
+const firebaseConfig = {
+
+  apiKey:
+    "AIzaSyDK8hxBdK7SNUY6qHqvtKsg9FB4IotvWYA",
+
+  authDomain:
+    "exporthub-india-87d31.firebaseapp.com",
+
+  databaseURL:
+    "https://exporthub-india-87d31-default-rtdb.firebaseio.com",
+
+  projectId:
+    "exporthub-india-87d31",
+
+  storageBucket:
+    "exporthub-india-87d31.appspot.com",
+
+  messagingSenderId:
+    "60863572079",
+
+  appId:
+    "1:60863572079:web:9c4146979ab138fb72c59a"
+};
+
+
+// =====================================================
+// INITIALIZE
+// =====================================================
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+const productsRef = ref(db, "products");
+
+
+// =====================================================
+// GLOBAL
+// =====================================================
+
+let currentUser = null;
+let userData = null;
+let selectedProduct = null;
+
+let cart =
+  JSON.parse(localStorage.getItem("cart") || "[]");
+
+let wishlist =
+  JSON.parse(localStorage.getItem("wishlist") || "[]");
+
+
+// =====================================================
+// HELPER
+// =====================================================
+
+function $(id) {
+  return document.getElementById(id);
+}
+
+
+function escapeHTML(value) {
+
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+}
+
+
+function showMessage(message) {
+  alert(message);
+}
+
+
+// =====================================================
+// LOCAL DATA
+// =====================================================
+
+function saveLocalData() {
+
+  localStorage.setItem(
+    "cart",
+    JSON.stringify(cart)
+  );
+
+  localStorage.setItem(
+    "wishlist",
+    JSON.stringify(wishlist)
+  );
+
+  updateCounts();
+  renderCart();
+  renderWishlist();
+}
+
+
+function updateCounts() {
+
+  if ($("cartCount"))
+    $("cartCount").innerText = cart.length;
+
+  if ($("totalCart"))
+    $("totalCart").innerText = cart.length;
+
+  if ($("totalWishlist"))
+    $("totalWishlist").innerText =
+      wishlist.length;
+
+}
+
+
+// =====================================================
+// IMAGE COMPRESSION
+// =====================================================
+
+function compressImage(file) {
+
+  return new Promise((resolve, reject) => {
+
+    if (!file) {
+      resolve("");
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+
+      const img = new Image();
+
+      img.onload = () => {
+
+        const maxWidth = 700;
+
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+
+          height =
+            height * maxWidth / width;
+
+          width = maxWidth;
+
+        }
+
+        const canvas =
+          document.createElement("canvas");
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx =
+          canvas.getContext("2d");
+
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          width,
+          height
+        );
+
+        resolve(
+          canvas.toDataURL(
+            "image/jpeg",
+            0.60
+          )
+        );
+
+      };
+
+      img.onerror = () =>
+        reject(
+          new Error("Image load nahi hui.")
+        );
+
+      img.src = reader.result;
+
+    };
+
+    reader.onerror = () =>
+      reject(
+        new Error("Image read nahi hui.")
+      );
+
+    reader.readAsDataURL(file);
+
+  });
+
+}
+
+
+// =====================================================
+// REGISTER
+// =====================================================
+
+if ($("registerBtn")) {
+
+  $("registerBtn").addEventListener(
+    "click",
+    async () => {
+
+      const name =
+        $("regName")?.value.trim();
+
+      const email =
+        $("regEmail")?.value.trim();
+
+      const password =
+        $("regPassword")?.value || "";
+
+      const type =
+        $("userType")?.value || "Buyer";
+
+
+      if (!name || !email || !password) {
+
+        showMessage(
+          "⚠️ Name, Email aur Password bharna zaroori hai."
+        );
+
+        return;
+      }
+
+
+      if (password.length < 6) {
+
+        showMessage(
+          "⚠️ Password kam se kam 6 characters ka hona chahiye."
+        );
+
+        return;
+      }
+
+
+      try {
+
+        const result =
+          await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+
+
+        await set(
+          ref(
+            db,
+            "users/" + result.user.uid
+          ),
+          {
+
+            name: name,
+            email: email,
+            type: type,
+            createdAt:
+              new Date().toISOString()
+
+          }
+        );
+
+
+        showMessage(
+          "✅ Account Created Successfully!"
+        );
+
+
+        $("regName").value = "";
+        $("regEmail").value = "";
+        $("regPassword").value = "";
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+          "❌ " + error.message
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+// =====================================================
+// LOGIN
+// =====================================================
+
+if ($("loginBtn")) {
+
+  $("loginBtn").addEventListener(
+    "click",
+    async () => {
+
+      const email =
+        $("emailInput")?.value.trim();
+
+      const password =
+        $("passwordInput")?.value || "";
+
+
+      if (!email || !password) {
+
+        showMessage(
+          "⚠️ Email aur Password bharna zaroori hai."
+        );
+
+        return;
+      }
+
+
+      try {
+
+        await setPersistence(
+          auth,
+          browserLocalPersistence
+        );
+
+        await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+
+        showMessage(
+          "✅ Login Successful!"
+        );
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+          "❌ " + error.message
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+// =====================================================
+// RESET PASSWORD
+// =====================================================
+
+if ($("resetBtn")) {
+
+  $("resetBtn").addEventListener(
+    "click",
+    async () => {
+
+      const email =
+        $("emailInput")?.value.trim();
+
+
+      if (!email) {
+
+        showMessage(
+          "⚠️ Pehle Email enter karo."
+        );
+
+        return;
+      }
+
+
+      try {
+
+        await sendPasswordResetEmail(
+          auth,
+          email
+        );
+
+        showMessage(
+          "✅ Password reset email bhej diya gaya."
+        );
+
+      } catch (error) {
+
+        showMessage(
+          "❌ " + error.message
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+// =====================================================
+// LOGOUT
+// =====================================================
+
+if ($("logoutBtn")) {
+
+  $("logoutBtn").addEventListener(
+    "click",
+    async () => {
+
+      try {
+
+        await signOut(auth);
+
+        showMessage(
+          "✅ Logout Successful!"
+        );
+
+      } catch (error) {
+
+        showMessage(
+          "❌ " + error.message
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+// =====================================================
+// SELLER PROFILE LOAD
+// =====================================================
+
+async function loadSellerProfile(uid) {
+
+  if (!uid) return;
+
+  try {
+
+    const snap =
+      await get(
+        ref(
+          db,
+          "sellerProfile/" + uid
+        )
+      );
+
+
+    if (!snap.exists()) return;
+
+
+    const data = snap.val();
+
+
+    if ($("sellerName"))
+      $("sellerName").value =
+        data.name || "";
+
+    if ($("sellerCompany"))
+      $("sellerCompany").value =
+        data.company || "";
+
+    if ($("sellerPhone"))
+      $("sellerPhone").value =
+        data.phone || "";
+
+    if ($("sellerEmail"))
+      $("sellerEmail").value =
+        data.email || "";
+
+    if ($("sellerAddress"))
+      $("sellerAddress").value =
+        data.address || "";
+
+
+  } catch (error) {
+
+    console.error(
+      "Seller profile error:",
+      error
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// SAVE SELLER PROFILE
+// =====================================================
+
+if ($("saveSellerBtn")) {
+
+  $("saveSellerBtn").addEventListener(
+    "click",
+    async () => {
+
+      if (!currentUser) {
+
+        showMessage(
+          "⚠️ Pehle Login karo."
+        );
+
+        return;
+      }
+
+
+      if (
+        !userData ||
+        userData.type !== "Seller"
+      ) {
+
+        showMessage(
+          "⚠️ Seller account se login karo."
+        );
+
+        return;
+      }
+
+
+      const data = {
+
+        name:
+          $("sellerName")?.value.trim() || "",
+
+        company:
+          $("sellerCompany")?.value.trim() || "",
+
+        phone:
+          $("sellerPhone")?.value.trim() || "",
+
+        email:
+          $("sellerEmail")?.value.trim() || "",
+
+        address:
+          $("sellerAddress")?.value.trim() || "",
+
+        uid:
+          currentUser.uid,
+
+        updatedAt:
+          new Date().toISOString()
+
+      };
+
+
+      try {
+
+        await set(
+          ref(
+            db,
+            "sellerProfile/" +
+            currentUser.uid
+          ),
+          data
+        );
+
+
+        showMessage(
+          "✅ Seller Profile Saved!"
+        );
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+          "❌ " + error.message
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+// =====================================================
+// UPLOAD PRODUCT
+// =====================================================
+
+if ($("uploadBtn")) {
+
+  $("uploadBtn").addEventListener(
+    "click",
+    async () => {
+
+      if (!currentUser) {
+
+        showMessage(
+          "⚠️ Pehle Seller Login karo."
+        );
+
+        return;
+      }
+
+
+      if (
+        !userData ||
+        userData.type !== "Seller"
+      ) {
+
+        showMessage(
+          "⚠️ Seller account se login karo."
+        );
+
+        return;
+      }
+
+
+      const name =
+        $("productName")?.value.trim();
+
+      const price =
+        $("productPrice")?.value.trim();
+
+      const category =
+        $("productCategory")?.value || "";
+
+      const description =
+        $("productDescription")?.value.trim();
+
+      const imageFile =
+        $("productImage")?.files?.[0];
+
+
+      if (
+        !name ||
+        !price ||
+        !category ||
+        !description
+      ) {
+
+        showMessage(
+          "⚠️ Product Name, Price, Category aur Description bharna zaroori hai."
+        );
+
+        return;
+      }
+
+
+      try {
+
+        showMessage(
+          "⏳ Product upload ho raha hai..."
+        );
+
+
+        let image = "";
+
+
+        if (imageFile) {
+
+          if (
+            !imageFile.type.startsWith("image/")
+          ) {
+
+            showMessage(
+              "⚠️ Sirf image file select karo."
+            );
+
+            return;
+          }
+
+
+          image =
+            await compressImage(
+              imageFile
+            );
+
+        }
+
+
+        const profileSnap =
+          await get(
+            ref(
+              db,
+              "sellerProfile/" +
+              currentUser.uid
+            )
+          );
+
+
+        const profile =
+          profileSnap.exists()
+            ? profileSnap.val()
+            : {};
+
+
+        const product = {
+
+          name: name,
+
+          price: price,
+
+          category: category,
+
+          description: description,
+
+          image: image,
+
+          sellerUid:
+            currentUser.uid,
+
+          sellerEmail:
+            currentUser.email || "",
+
+          sellerName:
+            profile.name ||
+            currentUser.email ||
+            "Seller",
+
+          sellerCompany:
+            profile.company || "",
+
+          createdAt:
+            new Date().toISOString()
+
+        };
+
+
+        await push(
+          productsRef,
+          product
+        );
+
+
+        showMessage(
+          "✅ Product Successfully Uploaded!"
+        );
+
+
+        $("productName").value = "";
+        $("productPrice").value = "";
+        $("productCategory").value = "";
+        $("productDescription").value = "";
+        $("productImage").value = "";
+
+
+      } catch (error) {
+
+        console.error(
+          "Product upload error:",
+          error
+        );
+
+        showMessage(
+          "❌ Product upload nahi hua: " +
+          error.message
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+// =====================================================
+// PRODUCT CARD
+// =====================================================
+
+function createProductCard(
+  product,
+  productId
+) {
+
+  const image =
+    product.image ||
+    "https://via.placeholder.com/600x400?text=ExportHub+India";
+
+
+  return `
+
+    <div class="card productCard">
+
+      <img
+        src="${escapeHTML(image)}"
+        alt="${escapeHTML(product.name || "Product")}"
+        onerror="this.src='https://via.placeholder.com/600x400?text=Product'"
+        style="
+          width:100%;
+          height:200px;
+          object-fit:cover;
+          border-radius:10px;
+        "
+      >
+
+      <h3>
+        ${escapeHTML(product.name)}
+      </h3>
+
+      <p>
+        💰 Price:
+        ${escapeHTML(product.price || "Contact for price")}
+      </p>
+
+      <p>
+        📂 Category:
+        ${escapeHTML(product.category || "")}
+      </p>
+
+      <p>
+        ${escapeHTML(product.description || "")}
+      </p>
+
+      <p>
+        🏪 Seller:
+        ${escapeHTML(
+          product.sellerName || "Seller"
+        )}
+      </p>
+
+      <button
+        class="btn"
+        onclick="addProductToCart('${productId}')">
+        🛒 Add to Cart
+      </button>
+
+      <button
+        class="btn"
+        onclick="buyProduct('${productId}')">
+        💳 Buy Now
+      </button>
+
+      <button
+        class="btn"
+        onclick="addToWishlist('${productId}')">
+        ❤️ Wishlist
+      </button>
+
+    </div>
+
+  `;
+
+}
+
+
+// =====================================================
+// SHOW PRODUCTS
+// =====================================================
+
+function loadProducts() {
+
+  onValue(
+    productsRef,
+    (snapshot) => {
+
+      const box =
+        $("productsBox");
+
+      const allBox =
+        $("allProducts");
+
+
+      if (box)
+        box.innerHTML = "";
+
+      if (allBox)
+        allBox.innerHTML = "";
+
+
+      let total = 0;
+      let mine = 0;
+
+
+      if (!snapshot.exists()) {
+
+        if (box)
+          box.innerHTML =
+            "<p>📦 Abhi koi product nahi hai.</p>";
+
+        if (allBox)
+          allBox.innerHTML =
+            "<p>📦 Abhi koi product uploaded nahi hai.</p>";
+
+        if ($("totalProducts"))
+          $("totalProducts").innerText = "0";
+
+        if ($("myProducts"))
+          $("myProducts").innerText = "0";
+
+        return;
+      }
+
+
+      snapshot.forEach(
+        (child) => {
+
+          const product =
+            child.val();
+
+          const id =
+            child.key;
+
+          total++;
+
+
+          if (
+            currentUser &&
+            product.sellerUid ===
+              currentUser.uid
+          ) {
+
+            mine++;
+
+          }
+
+
+          const html =
+            createProductCard(
+              product,
+              id
+            );
+
+
+          if (box)
+            box.innerHTML += html;
+
+          if (allBox)
+            allBox.innerHTML += html;
+
+        }
+      );
+
+
+      if ($("totalProducts"))
+        $("totalProducts").innerText =
+          total;
+
+      if ($("myProducts"))
+        $("myProducts").innerText =
+          mine;
+
+
+      filterProducts();
+
+    }
+  );
+
+}
+
+
+// =====================================================
+// SEARCH
+// =====================================================
+
+if ($("searchBox")) {
+
+  $("searchBox").addEventListener(
+    "input",
+    filterProducts
+  );
+
+}
+
+
+function filterProducts() {
+
+  const search =
+    $("searchBox")?.value
+      .toLowerCase()
+      .trim() || "";
+
+
+  document
+    .querySelectorAll(
+      ".productCard"
+    )
+    .forEach(
+      (card) => {
+
+        card.style.display =
+          card.innerText
+            .toLowerCase()
+            .includes(search)
+              ? "block"
+              : "none";
+
+      }
+    );
+
+}
+
+
+// =====================================================
+// ADD CART
+// =====================================================
+
+window.addProductToCart =
+  async function(productId) {
+
+    try {
+
+      const snap =
+        await get(
+          ref(
+            db,
+            "products/" +
+            productId
+          )
+        );
+
+
+      if (!snap.exists()) {
+
+        showMessage(
+          "❌ Product nahi mila."
+        );
+
+        return;
+      }
+
+
+      const product =
+        snap.val();
+
+
+      const existing =
+        cart.find(
+          item =>
+            item.id === productId
+        );
+
+
+      if (existing) {
+
+        existing.quantity =
+          Number(
+            existing.quantity || 1
+          ) + 1;
+
+      } else {
+
+        cart.push({
+
+          id: productId,
+
+          name:
+            product.name || "",
+
+          price:
+            product.price || "0",
+
+          category:
+            product.category || "",
+
+          description:
+            product.description || "",
+
+          image:
+            product.image || "",
+
+          sellerUid:
+            product.sellerUid || "",
+
+          sellerName:
+            product.sellerName || "",
+
+          quantity: 1
+
+        });
+
+      }
+
+
+      saveLocalData();
+
+      showMessage(
+        "🛒 Product Cart me add ho gaya!"
+      );
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      showMessage(
+        "❌ Cart me product add nahi hua."
+      );
+
+    }
+
+  };
+
+
+// =====================================================
+// BUY PRODUCT
+// =====================================================
+
+window.buyProduct =
+  async function(productId) {
+
+    try {
+
+      const snap =
+        await get(
+          ref(
+            db,
+            "products/" +
+            productId
+          )
+        );
+
+
+      if (!snap.exists()) {
+
+        showMessage(
+          "❌ Product nahi mila."
+        );
+
+        return;
+      }
+
+
+      selectedProduct = {
+
+        id: productId,
+        ...snap.val()
+
+      };
+
+
+      if ($("checkout")) {
+
+        $("checkout")
+          .scrollIntoView({
+            behavior: "smooth"
+          });
+
+      }
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      showMessage(
+        "❌ Product load nahi hua."
+      );
+
+    }
+
+  };
+
+
+// =====================================================
+// WISHLIST
+// =====================================================
+
+window.addToWishlist =
+  async function(productId) {
+
+    try {
+
+      const snap =
+        await get(
+          ref(
+            db,
+            "products/" +
+            productId
+          )
+        );
+
+
+      if (!snap.exists()) return;
+
+
+      const product =
+        snap.val();
+
+
+      if (
+        wishlist.some(
+          item =>
+            item.id === productId
+        )
+      ) {
+
+        showMessage(
+          "❤️ Product already wishlist mein hai."
+        );
+
+        return;
+      }
+
+
+      wishlist.push({
+
+        id: productId,
+
+        name:
+          product.name || "",
+
+        price:
+          product.price || "0",
+
+        image:
+          product.image || ""
+
+      });
+
+
+      saveLocalData();
+
+      showMessage(
+        "❤️ Wishlist mein add ho gaya!"
+      );
+
+
+    } catch (error) {
+
+      console.error(
+    </script>    
 </body>
 </html>
