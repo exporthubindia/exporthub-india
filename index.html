@@ -2043,17 +2043,22 @@ onValue(
       const productId = childSnapshot.key;
 
       const image =
-        product.image ||
-        "https://via.placeholder.com/600x400?text=Product";
+  product.image ||
+  "https://via.placeholder.com/600x400?text=Product";
+
+const safeImage = escapeHTML(image);
 
       container.innerHTML += `
 
         <div class="card productCard">
 
-          <img
-            src="${image}"
-            style="width:100%;height:200px;object-fit:cover;border-radius:10px;"
-          >
+  <img
+  src="${safeImage}"
+  alt="${escapeHTML(product.name || "Product")}"
+  style="width:100%;height:200px;object-fit:cover;border-radius:10px;"
+  onerror="this.src='https://via.placeholder.com/600x400?text=Product'"
+>
+          
 
           <h3>
             ${escapeHTML(product.name)}
